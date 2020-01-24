@@ -208,7 +208,7 @@ public class Fixtures {
                                     + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
                                     + " league_id=VALUES(league_id), season_id=VALUES(season_id), stage_id=VALUES(stage_id), round_id=VALUES(round_id), venue_id=VALUES(venue_id),"
                                     + " weather_code=VALUES(weather_code), weather_type=VALUES(weather_type), weather_report_image=VALUES(weather_report_image), temperature=VALUES(temperature),"
-                                    + " fixture_status=VALUES(fixture_status), starting_time=VALUES(starting_time), starting_date=VALUE(starting_date), timezone=VALUES(timezone),"
+                                    + " fixture_status=VALUES(fixture_status), starting_time=VALUES(starting_time), starting_date=VALUES(starting_date), timezone=VALUES(timezone),"
                                     + " time_minute=VALUES(time_minute), time_second=VALUES(time_second), added_time=VALUES(added_time), extra_time=VALUES(extra_time), injury_time=VALUES(injury_time)";
 
 
