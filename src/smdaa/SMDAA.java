@@ -69,15 +69,15 @@ public class SMDAA {
    
 
     
-    continents.manageContinents(continentEndpoint);
-    countries.manageCountires(countriesEndpoint);
-    league.manageLeagues(leaguesEndpoint);
-    seasons.manageSeasons(seasonsEndpoint);
-    venues.manageVenues(venuesEndpoint);
-    stages.manageStages(stagesEndpoint);
-    rounds.manageRounds(roundsEndpoint);
-    teams.manageTeams(teamsEndpoint);
-    players.managePlayers(playersEndpoint);
+    //continents.manageContinents(continentEndpoint);
+//    countries.manageCountires(countriesEndpoint);
+//    league.manageLeagues(leaguesEndpoint);
+//    seasons.manageSeasons(seasonsEndpoint);
+//    venues.manageVenues(venuesEndpoint);
+//    stages.manageStages(stagesEndpoint);
+//    rounds.manageRounds(roundsEndpoint);
+//    teams.manageTeams(teamsEndpoint);
+//    players.managePlayers(playersEndpoint);
     fixtures.manageFixtures(fixturesEndpoint);
     fixtures.manageLivescores(livescoresEndpoint);
         
