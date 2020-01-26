@@ -13,6 +13,7 @@ import org.json.JSONObject;
 public class Stages {
     
     private Connection db;
+    private Seasons seasons;
     
     public Stages(){
         
@@ -20,6 +21,7 @@ public class Stages {
     
     public Stages(Connection db){
         this.db = db;
+        this.seasons = new Seasons(db);
     }
     
     
@@ -27,7 +29,7 @@ public class Stages {
             
             
         
-        Seasons seasons = new Seasons(this.db);
+        
         JSONObject seasonIds = seasons.getSeasonIds();
         JSONArray seasonsArray = seasonIds.getJSONArray("data");
         

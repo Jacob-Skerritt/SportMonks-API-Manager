@@ -16,6 +16,11 @@ import org.json.JSONObject;
 public class Fixtures {
     
     private Connection db;
+    private Leagues leagues;
+    private FixturesPlayers fixturesPlayers;
+    private FixturesEvents fixturesEvents;
+    private FixturesCorners fixturesCorners;
+    private FixturesTeams fixturesTeams;
     
     public Fixtures(){
         
@@ -23,20 +28,20 @@ public class Fixtures {
     
     public Fixtures(Connection db){
         this.db = db;
-    }
+        this.leagues  = new Leagues(db); 
+        this.fixturesPlayers = new FixturesPlayers(db);
+        this.fixturesEvents = new FixturesEvents(db);
+        this.fixturesCorners = new FixturesCorners(db);
+        this.fixturesTeams  = new FixturesTeams(db);
+    } 
     
     public  void manageFixtures(String fixturesEndpoint) throws IOException, SQLException{
             
-            
         
-        Leagues leagues = new Leagues(this.db);
         JSONObject leagueIds = leagues.getJSONLeaguesId();
         JSONArray leaguesArray = leagueIds.getJSONArray("data");
-        FixturesPlayers fixturePlayers = new FixturesPlayers(db);
-        FixturesEvents fixtureEvents = new FixturesEvents(db);
-        FixturesCorners fixtureCorners = new FixturesCorners(db);
-        FixturesTeams fixturesTeams = new FixturesTeams(this.db);
-        
+         
+
         for(Object seasonId: leaguesArray){
             JSONObject tempSeason = (JSONObject) seasonId;
             int id = tempSeason.getInt("id");
@@ -136,10 +141,10 @@ public class Fixtures {
 
                         }
                         
-                        fixturePlayers.addFixturesPlayers(tempFixture.getJSONArray("bench"));
-                        fixturePlayers.addFixturesPlayers(tempFixture.getJSONArray("lineup"));
-                        fixtureEvents.addFixturesEvents(tempFixture.getJSONArray("events"));
-                        fixtureCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
+                        fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("bench"));
+                        fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("lineup"));
+                        fixturesEvents.addFixturesEvents(tempFixture.getJSONArray("events"));
+                        fixturesCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
                         JSONObject localTeam  = createFixtureTeam(tempFixture,true);
                         JSONObject visitorTeam  = createFixtureTeam(tempFixture, false);
 
@@ -167,14 +172,8 @@ public class Fixtures {
             
         
         System.out.println("Started now: " + LocalDateTime.now());
-        //Class variables??
-        FixturesPlayers fixturePlayers = new FixturesPlayers(db);
-        FixturesEvents fixtureEvents = new FixturesEvents(db);
-        FixturesTeams fixturesTeams = new FixturesTeams(db);
-        FixturesCorners fixtureCorners = new FixturesCorners(db);
-        
-        
-        
+
+
         boolean lastPage = false;
         int i = 1;
         int maxPage = 0;
@@ -267,10 +266,10 @@ public class Fixtures {
 
                         }
 
-                        fixturePlayers.addFixturesPlayers(tempFixture.getJSONArray("bench"));
-                        fixturePlayers.addFixturesPlayers(tempFixture.getJSONArray("lineup"));
-                        fixtureEvents.addFixturesEvents(tempFixture.getJSONArray("events"));
-                        fixtureCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
+                        fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("bench"));
+                        fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("lineup"));
+                        fixturesEvents.addFixturesEvents(tempFixture.getJSONArray("events"));
+                        fixturesCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
                         JSONObject localTeam  = createFixtureTeam(tempFixture,true);
                         JSONObject visitorTeam  = createFixtureTeam(tempFixture, false);
                         fixturesTeams.addFixturesTeams(localTeam);

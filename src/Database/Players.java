@@ -14,6 +14,8 @@ import org.json.JSONObject;
 public class Players {
     
     private Connection db;
+    private TeamsSeasons teamsSeasons;
+    private TeamsPlayers teamsPlayers;
     
     public Players(){
         
@@ -21,16 +23,19 @@ public class Players {
     
     public Players(Connection db){
         this.db = db;
+        this.teamsSeasons = new TeamsSeasons(db);
+        this.teamsPlayers = new TeamsPlayers(db);
+        
     }
     
     
     public void managePlayers(String playersEndpoint) throws SQLException, IOException{
         
-        TeamsSeasons teamsSeasons = new TeamsSeasons(this.db);
-        TeamsPlayers teamsPlayers = new TeamsPlayers(this.db);
+        
+         
         JSONObject teamsSeasonsIds = teamsSeasons.getTeamsSeasonsIds();
         JSONArray teamsSeasonsArray = teamsSeasonsIds.getJSONArray("data");
-        JSONArray teamsPlayersArray = new JSONArray();
+        
         
         
         for(Object TSObject: teamsSeasonsArray){
@@ -41,7 +46,7 @@ public class Players {
             
             String tempPlayersEndpoint = Endpoint.makeNewEndpoint(playersEndpoint, seasonId, "season/");
             String newPlayersEndpoint = Endpoint.makeNewEndpoint(tempPlayersEndpoint, teamId, "team/");
-            System.out.println(newPlayersEndpoint);
+            
             
             
 
@@ -52,7 +57,7 @@ public class Players {
             while(!lastPage){
                 
                 JSONObject players = Endpoint.getDataFromEndpoint(newPlayersEndpoint+i);
-                
+                JSONArray teamsPlayersArray = new JSONArray();
                 JSONArray teamsArray = players.getJSONArray("data");
                 JSONObject metaData = players.getJSONObject("meta");
                 
@@ -152,11 +157,14 @@ public class Players {
 
 
                         teamsPlayersArray.put(teamPlayer);
+                         
                     }
 
 
 
                 }
+                teamsPlayers.addTeamsPlayers(teamsPlayersArray);
+                
                 if(maxPage <= i)
                     lastPage = true;
                 else
@@ -166,11 +174,7 @@ public class Players {
                 
             }
         }
-        
-        teamsPlayers.addTeamsPlayers(teamsPlayersArray);
-        
-        
-        
+   
     }
     
 }

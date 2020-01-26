@@ -20,6 +20,7 @@ import org.json.JSONObject;
 public class Countries {
     
     private Connection db;
+    private Continents continents;
     
     public Countries(){
         
@@ -27,6 +28,7 @@ public class Countries {
     
     public Countries(Connection db){
         this.db = db;
+        this.continents = new Continents(db);
     }
     
        
@@ -42,10 +44,7 @@ public class Countries {
         JSONObject countries = Endpoint.getDataFromEndpoint(countriesEndpoint+i);
     
    
-        
-        
-    
-        Continents continents = new Continents(this.db);
+       
         JSONObject continentsObject = continents.getJSONContinents();
         JSONArray continentsArray = continentsObject.getJSONArray("data");
         
@@ -92,10 +91,6 @@ public class Countries {
                     String query = " insert into countries (id, name, continent_id, flag)"
                             + " values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
                             + " name=VALUES(name), continent_id=VALUES(continent_id), flag=VALUES(flag)";
-                    
-                    System.out.println(query);
-                    
-
                     
 
                     // create the mysql insert preparedstatement

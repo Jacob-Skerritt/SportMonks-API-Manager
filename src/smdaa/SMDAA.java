@@ -34,7 +34,6 @@ public class SMDAA {
         
         
     final String TOKEN ="IeJEyAVbp2IjoYzCdGpZBk7mWOAzSkRXHeiYYeOK9OWgOI0iNjaTcGAXsHfG";
-    //Class.forName not needed?? Must check when tested on Tomcat server at college, if issue arise it may be caused my missing .forName decleration
     Class.forName("com.mysql.cj.jdbc.Driver");
     Config database = new Config("jdbc:mysql://localhost/in_game_ratings","root", "" );
     Connection db = database.getDatabaseConnection();
@@ -69,17 +68,17 @@ public class SMDAA {
    
 
     
-    //continents.manageContinents(continentEndpoint);
-//    countries.manageCountires(countriesEndpoint);
-//    league.manageLeagues(leaguesEndpoint);
-//    seasons.manageSeasons(seasonsEndpoint);
-//    venues.manageVenues(venuesEndpoint);
-//    stages.manageStages(stagesEndpoint);
-//    rounds.manageRounds(roundsEndpoint);
-//    teams.manageTeams(teamsEndpoint);
-//    players.managePlayers(playersEndpoint);
+    continents.manageContinents(continentEndpoint);
+    countries.manageCountires(countriesEndpoint);
+    league.manageLeagues(leaguesEndpoint);
+    seasons.manageSeasons(seasonsEndpoint);
+    venues.manageVenues(venuesEndpoint);
+    stages.manageStages(stagesEndpoint);
+    rounds.manageRounds(roundsEndpoint);
+    teams.manageTeams(teamsEndpoint);
+    players.managePlayers(playersEndpoint);
     fixtures.manageFixtures(fixturesEndpoint);
-    fixtures.manageLivescores(livescoresEndpoint);
+    //fixtures.manageLivescores(livescoresEndpoint);
         
     
     db.close();

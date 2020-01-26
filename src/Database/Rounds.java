@@ -17,6 +17,7 @@ import org.json.JSONObject;
 public class Rounds {
     
     private Connection db;
+    private Seasons seasons;
     
     public Rounds(){
         
@@ -24,13 +25,11 @@ public class Rounds {
     
     public Rounds(Connection db){
         this.db = db;
+        this.seasons = new Seasons(db);
     }
     
     public  void manageRounds(String roundsEndpoint) throws IOException, SQLException{
             
-            
-        
-        Seasons seasons = new Seasons(this.db);
         JSONObject seasonIds = seasons.getSeasonIds();
         JSONArray seasonsArray = seasonIds.getJSONArray("data");
         

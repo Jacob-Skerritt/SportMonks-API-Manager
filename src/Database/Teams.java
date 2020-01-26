@@ -15,6 +15,7 @@ import org.json.JSONObject;
 public class Teams {
     
     private Connection db;
+    private Seasons seasons;
     
     
     public Teams(){
@@ -23,13 +24,14 @@ public class Teams {
     
     public Teams(Connection db){
         this.db  =db;  
+        this.seasons = new Seasons(db);
     }
     
     public  void manageTeams(String teamsEndpoint) throws IOException, SQLException{
             
             
         
-        Seasons seasons = new Seasons(this.db);
+        seasons = new Seasons(this.db);
         JSONObject seasonIds = seasons.getSeasonIds();
         JSONArray seasonsArray = seasonIds.getJSONArray("data");
         

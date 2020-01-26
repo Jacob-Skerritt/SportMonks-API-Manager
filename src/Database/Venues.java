@@ -13,6 +13,7 @@ import org.json.JSONObject;
 public class Venues {
     
     private Connection db;
+    private Seasons seasons;
     
     public Venues(){
         
@@ -20,13 +21,14 @@ public class Venues {
     
     public Venues(Connection db){
         this.db = db;
+        this.seasons = new Seasons(db);
     }
     
     public  void manageVenues(String venuesEndpoint) throws IOException, SQLException{
             
             
         
-        Seasons seasons = new Seasons(this.db);
+        seasons = new Seasons(this.db);
         JSONObject seasonIds = seasons.getSeasonIds();
         JSONArray seasonsArray = seasonIds.getJSONArray("data");
         
@@ -35,7 +37,7 @@ public class Venues {
             JSONObject tempSeason = (JSONObject) seasonId;
             int id = tempSeason.getInt("id");
             String newvenuesEndpoint = Endpoint.makeNewEndpoint(venuesEndpoint, id, "season/");
-            System.out.println(newvenuesEndpoint);
+            
             boolean lastPage = false;
             int i = 1;
             int maxPage = 0;
