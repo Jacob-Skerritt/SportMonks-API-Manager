@@ -35,8 +35,8 @@ public class Fixtures {
         FixturesPlayers fixturePlayers = new FixturesPlayers(db);
         FixturesEvents fixtureEvents = new FixturesEvents(db);
         FixturesCorners fixtureCorners = new FixturesCorners(db);
+        FixturesTeams fixturesTeams = new FixturesTeams(this.db);
         
-        JSONArray fixturesTeamsArray = new JSONArray();
         for(Object seasonId: leaguesArray){
             JSONObject tempSeason = (JSONObject) seasonId;
             int id = tempSeason.getInt("id");
@@ -142,8 +142,9 @@ public class Fixtures {
                         fixtureCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
                         JSONObject localTeam  = createFixtureTeam(tempFixture,true);
                         JSONObject visitorTeam  = createFixtureTeam(tempFixture, false);
-                        fixturesTeamsArray.put(localTeam);
-                        fixturesTeamsArray.put(visitorTeam);
+
+                        fixturesTeams.addFixturesTeams(localTeam);
+                        fixturesTeams.addFixturesTeams(visitorTeam);
 
                     }
                 if(maxPage <= i)
@@ -156,8 +157,8 @@ public class Fixtures {
             
         }
         
-        FixturesTeams fixturesTeams = new FixturesTeams(this.db);
-        fixturesTeams.addFixturesTeams(fixturesTeamsArray);
+        
+       
         
     }
     
@@ -173,7 +174,6 @@ public class Fixtures {
         FixturesCorners fixtureCorners = new FixturesCorners(db);
         
         
-        JSONArray fixturesTeamsArray = new JSONArray();
         
         boolean lastPage = false;
         int i = 1;
@@ -273,8 +273,8 @@ public class Fixtures {
                         fixtureCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
                         JSONObject localTeam  = createFixtureTeam(tempFixture,true);
                         JSONObject visitorTeam  = createFixtureTeam(tempFixture, false);
-                        fixturesTeamsArray.put(localTeam);
-                        fixturesTeamsArray.put(visitorTeam);
+                        fixturesTeams.addFixturesTeams(localTeam);
+                        fixturesTeams.addFixturesTeams(visitorTeam);
                    // }
                 }
                     
@@ -285,7 +285,7 @@ public class Fixtures {
 
         }
 
-    fixturesTeams.addFixturesTeams(fixturesTeamsArray);
+    
     System.out.println("Finished now: " + LocalDateTime.now());
         
     }
@@ -295,6 +295,7 @@ public class Fixtures {
         JSONObject returnFixture = new JSONObject();
         JSONObject scores = fixture.getJSONObject("scores");
         JSONObject formations = fixture.getJSONObject("formations");
+        JSONArray statsArray = fixture.getJSONArray("stats");
         
         String team;
         
@@ -327,6 +328,13 @@ public class Fixtures {
             returnFixture.put("pen_score", scores.getInt(team + "_pen_score"));
         else
             returnFixture.put("pen_score", "null");
+        
+        if(!statsArray.isEmpty()){
+            if(localTeam)
+                returnFixture.put("stats", statsArray.get(0));
+            else
+                returnFixture.put("stats", statsArray.get(1));
+        }
         
         
            
@@ -449,6 +457,7 @@ public class Fixtures {
         sanitisedFixture.put("bench", fixture.getJSONObject("bench").getJSONArray("data"));
         sanitisedFixture.put("lineup", fixture.getJSONObject("lineup").getJSONArray("data"));
         sanitisedFixture.put("corners", fixture.getJSONObject("corners").getJSONArray("data"));
+        sanitisedFixture.put("stats", fixture.getJSONObject("stats").getJSONArray("data"));
         sanitisedFixture.put("scores", fixture.getJSONObject("scores"));
          
         

@@ -63,7 +63,7 @@ public class SMDAA {
     
     LocalDate sd = LocalDate.parse("2020-01-01");
     LocalDate ed = LocalDate.parse("2020-06-01");
-    String fixturesEndpoint = "https://soccer.sportmonks.com/api/v2.0/fixtures/between/"+ sd +"/"+ ed +"?api_token=" + TOKEN + "&include=events,bench,lineup,corners&leagues=&page=";
+    String fixturesEndpoint = "https://soccer.sportmonks.com/api/v2.0/fixtures/between/"+ sd +"/"+ ed +"?api_token=" + TOKEN + "&include=events,bench,lineup,stats,corners&leagues=&page=";
     
    
    
