@@ -20,34 +20,30 @@ public class Endpoint {
   
     
     public static JSONObject getDataFromEndpoint(String endpoint) throws ProtocolException, IOException{
-        JSONObject newJson = new JSONObject("{}");
+        JSONObject newJson = new JSONObject();
         URL url = new URL(endpoint);
         HttpURLConnection connect = (HttpURLConnection)url.openConnection(); 
         connect.setRequestMethod("GET"); 
         connect.connect();
 
-        int responsecode = connect.getResponseCode(); 
 
-        if(responsecode != 200)
-            throw new RuntimeException("HttpResponseCode: " +responsecode);
-        else
-        {
+        try (Scanner sc = new Scanner(url.openStream())) {
+            String inline ="";
+            
+            while(sc.hasNext())
+            {
+                inline+=sc.nextLine();
+                
+            }
 
-                 try (Scanner sc = new Scanner(url.openStream())) {
-                     String inline ="";
-                     while(sc.hasNext())
-                     {
-                         inline+=sc.nextLine();
-                     }
+            newJson = new JSONObject(inline);
+            sc.close();
 
-                     newJson = new JSONObject(inline);
-                     sc.close();
-                     
-                 }catch(Exception e){
-                     
-                 }
-                 
+        }catch(Exception e){
+            System.out.println(e);
+            throw new RuntimeException("Error connection to endpoint!");
         }
+        
         return newJson;
         
     }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -59,7 +60,7 @@ public class SMDAA {
     String teamsEndpoint = "https://soccer.sportmonks.com/api/v2.0/teams/season/?api_token=" + TOKEN + "&page=";
     String playersEndpoint = "https://soccer.sportmonks.com/api/v2.0/squad/season//team/?api_token=" + TOKEN + "&include=player&page=";
     String livescoresEndpoint = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&leagues=8&page=";
-    
+    String livescoresEndpoint2 = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
     LocalDate sd = LocalDate.parse("2020-01-01");
     LocalDate ed = LocalDate.parse("2020-06-01");
     String fixturesEndpoint = "https://soccer.sportmonks.com/api/v2.0/fixtures/between/"+ sd +"/"+ ed +"?api_token=" + TOKEN + "&include=events,bench,lineup,stats,corners&leagues=&page=";
@@ -78,22 +79,36 @@ public class SMDAA {
     teams.manageTeams(teamsEndpoint);
     players.managePlayers(playersEndpoint);
     fixtures.manageFixtures(fixturesEndpoint);
-    //fixtures.manageLivescores(livescoresEndpoint);
+    
         
     
+    
+    
+    
+    
+//    LocalDateTime currentTime = LocalDateTime.now();
+//    LocalDateTime futureTime = currentTime.plusSeconds(5);
+//    while(true){
+//        
+//        if(currentTime.isAfter(futureTime)){
+//            fixtures.manageLivescores(livescoresEndpoint2);
+//            futureTime = futureTime.plusSeconds(60);
+//            
+//            System.out.println("\nCurrent Time :" + currentTime + "\nFutureTime: " + futureTime + "\n");
+//        }
+//        
+//        
+//        
+//        currentTime = LocalDateTime.now();
+//    }
+    
     db.close();
-    
-    
-    
-    
-
    
 
        
     
     /*
-    LocalDateTime currentTime = LocalDateTime.now();
-    LocalDateTime futureTime = currentTime.plusMinutes(1);
+    
     futureTime = futureTime.plusSeconds(1);
     LocalDateTime requestTime = (LocalDateTime.now()).plusMinutes(1);
     int i =2000;

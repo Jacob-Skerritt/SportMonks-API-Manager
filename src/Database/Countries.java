@@ -18,80 +18,77 @@ import org.json.JSONObject;
  * @author Jacob
  */
 public class Countries {
-    
+
     private Connection db;
     private Continents continents;
-    
-    public Countries(){
-        
+
+    public Countries() {
+
     }
-    
-    public Countries(Connection db){
+
+    public Countries(Connection db) {
         this.db = db;
         this.continents = new Continents(db);
     }
-    
-       
-    public void manageCountires(String countriesEndpoint) throws SQLException, IOException{
-        
-        
-        
+
+    public void manageCountires(String countriesEndpoint) throws SQLException, IOException {
+
         boolean lastPage = false;
         int i = 1;
         int maxPage = 0;
-        
-        while(!lastPage){
-        JSONObject countries = Endpoint.getDataFromEndpoint(countriesEndpoint+i);
-    
-   
-       
-        JSONObject continentsObject = continents.getJSONContinents();
-        JSONArray continentsArray = continentsObject.getJSONArray("data");
-        
-        JSONArray countriesArray = countries.getJSONArray("data");
-        Object countriesExtra;
-        int continentId = 0;
-        String continent;
-        JSONObject JSONCountriesExtra;
-        
-        JSONObject metaData = countries.getJSONObject("meta");
-        if(metaData.has("pagination")){
-            JSONObject pagination = metaData.getJSONObject("pagination");
-            maxPage = pagination.getInt("total_pages");
+
+        while (!lastPage) {
+
+            JSONObject countries;
+
+            try {
+                countries = Endpoint.getDataFromEndpoint(countriesEndpoint + i);
+            } catch (RuntimeException | IOException e) {
+                System.out.println(e);
+                break;
             }
-        
-            
-            for(Object obj:countriesArray){
-                JSONObject tempObject = (JSONObject) obj;  
-                
-                
+
+            JSONObject continentsObject = continents.getJSONContinents();
+            JSONArray continentsArray = continentsObject.getJSONArray("data");
+
+            JSONArray countriesArray = countries.getJSONArray("data");
+            Object countriesExtra;
+            int continentId = 0;
+            String continent;
+            JSONObject JSONCountriesExtra;
+
+            JSONObject metaData = countries.getJSONObject("meta");
+            if (metaData.has("pagination")) {
+                JSONObject pagination = metaData.getJSONObject("pagination");
+                maxPage = pagination.getInt("total_pages");
+            }
+
+            for (Object obj : countriesArray) {
+                JSONObject tempObject = (JSONObject) obj;
+
                 countriesExtra = tempObject.get("extra");
-                
-                
-                
-                if(!countriesExtra.toString().equals("null")){
-                    
+
+                if (!countriesExtra.toString().equals("null")) {
+
                     JSONCountriesExtra = (JSONObject) countriesExtra;
                     continent = JSONCountriesExtra.getString("continent");
-                }
-                else
+                } else {
                     continent = "Europe";
-                
-                for(Object obj2: continentsArray){
-                    JSONObject tempContinentObject = (JSONObject) obj2;
-                    if(tempContinentObject.getString("name").equals(continent))
-                        continentId = tempContinentObject.getInt("id");
-                    
                 }
-                
-                
+
+                for (Object obj2 : continentsArray) {
+                    JSONObject tempContinentObject = (JSONObject) obj2;
+                    if (tempContinentObject.getString("name").equals(continent)) {
+                        continentId = tempContinentObject.getInt("id");
+                    }
+
+                }
 
                 try {
                     // the mysql insert statement
                     String query = " insert into countries (id, name, continent_id, flag)"
                             + " values (?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
                             + " name=VALUES(name), continent_id=VALUES(continent_id), flag=VALUES(flag)";
-                    
 
                     // create the mysql insert preparedstatement
                     PreparedStatement preparedStmt = db.prepareStatement(query);
@@ -103,16 +100,17 @@ public class Countries {
 
                     // execute the preparedstatement
                     preparedStmt.execute();
-                }catch (SQLException ex) {
+                } catch (SQLException ex) {
 
                 }
 
             }
-            if(maxPage <= i)
+            if (maxPage <= i) {
                 lastPage = true;
-            else
+            } else {
                 i++;
+            }
         }
     }
-    
+
 }
