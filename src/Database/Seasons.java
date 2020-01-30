@@ -83,7 +83,7 @@ public class Seasons {
     public JSONObject getSeasonIds() throws SQLException {
         JSONObject seasons = new JSONObject();
         JSONArray seasonsArray = new JSONArray();
-        String query = "SELECT * FROM seasons WHERE active = 1";
+        String query = "SELECT * FROM seasons where active = 1";
 
         // create the java statement
         Statement st = db.createStatement();

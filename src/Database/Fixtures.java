@@ -19,6 +19,7 @@ public class Fixtures {
     private FixturesEvents fixturesEvents;
     private FixturesCorners fixturesCorners;
     private FixturesTeams fixturesTeams;
+    private Venues venues;
 
     public Fixtures() {
 
@@ -31,6 +32,7 @@ public class Fixtures {
         this.fixturesEvents = new FixturesEvents(db);
         this.fixturesCorners = new FixturesCorners(db);
         this.fixturesTeams = new FixturesTeams(db);
+        this.venues = new Venues(db);
     }
 
     public void manageFixtures(String fixturesEndpoint) throws IOException, SQLException {
@@ -69,7 +71,10 @@ public class Fixtures {
                 for (Object obj : fixturesArray) {
                     JSONObject tempObject = (JSONObject) obj;
                     JSONObject tempFixture = sanitiseFixture(tempObject);
-                    System.out.println(tempFixture.toString());
+                    
+                    
+                    if(!tempFixture.get("venue_id").toString().equals("null") && !venues.checkVenueExists(tempFixture.getInt("venue_id")))
+                        venues.addVenue(tempFixture.getInt("venue_id"));
 
                     try {
                         // the mysql insert statement
@@ -274,6 +279,133 @@ public class Fixtures {
         System.out.println("Finished now: " + LocalDateTime.now());
 
     }
+    
+    //The following method is a requirement for the group project and would not be used in a general context.
+    //Proper implementation to acquire past fixture data would require timed requests for the different leagues during periods of down time
+    //This method is only concerned with the gathering of a single leagues past games since the project focuses on the premier league
+    public void getPastLeagueFixtures(String fixturesEndpoint) throws IOException, SQLException {
+
+
+            
+
+            boolean lastPage = false;
+            int i = 1;
+            int maxPage = 0;
+
+            while (!lastPage) {
+
+                JSONObject fixtures;
+
+                try {
+                    fixtures = Endpoint.getDataFromEndpoint(fixturesEndpoint + i);
+                } catch (RuntimeException | IOException e) {
+                    System.out.println(e);
+                    break;
+                }
+
+                JSONArray fixturesArray = fixtures.getJSONArray("data");
+                JSONObject metaData = fixtures.getJSONObject("meta");
+
+                if (metaData.has("pagination")) {
+                    JSONObject pagination = metaData.getJSONObject("pagination");
+                    maxPage = pagination.getInt("total_pages");
+                }
+
+                for (Object obj : fixturesArray) {
+                    JSONObject tempObject = (JSONObject) obj;
+                    JSONObject tempFixture = sanitiseFixture(tempObject);
+                   
+                    if(!tempFixture.get("venue_id").toString().equals("null") && !venues.checkVenueExists(tempFixture.getInt("venue_id")))
+                        venues.addVenue(tempFixture.getInt("venue_id"));
+                    
+                    
+
+                    try {
+                        // the mysql insert statement
+                        String query = " insert into fixtures(id, league_id, season_id, stage_id, round_id, venue_id, weather_code, weather_type, weather_report_image, temperature, fixture_status, starting_time, starting_date, timezone, time_minute, time_second, added_time, extra_time, injury_time)"
+                                + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
+                                + " id=VALUES(id), league_id=VALUES(league_id), season_id=VALUES(season_id), stage_id=VALUES(stage_id), round_id=VALUES(round_id), venue_id=VALUES(venue_id),"
+                                + " weather_code=VALUES(weather_code), weather_type=VALUES(weather_type), weather_report_image=VALUES(weather_report_image), temperature=VALUES(temperature),"
+                                + " fixture_status=VALUES(fixture_status), starting_time=VALUES(starting_time), starting_date=VALUES(starting_date), timezone=VALUES(timezone),"
+                                + " time_minute=VALUES(time_minute), time_second=VALUES(time_second), added_time=VALUES(added_time), extra_time=VALUES(extra_time), injury_time=VALUES(injury_time)";
+
+                        // create the mysql insert preparedstatement
+                        PreparedStatement preparedStmt = db.prepareStatement(query);
+                        preparedStmt.setInt(1, tempFixture.getInt("id"));
+                        preparedStmt.setInt(2, tempFixture.getInt("league_id"));
+                        preparedStmt.setInt(3, tempFixture.getInt("season_id"));
+
+                        if (!tempFixture.get("stage_id").toString().equals("null")) {
+                            preparedStmt.setInt(4, tempFixture.getInt("stage_id"));
+                        } else {
+                            preparedStmt.setNull(4, java.sql.Types.VARCHAR);
+                        }
+
+                        if (!tempFixture.get("round_id").toString().equals("null")) {
+                            preparedStmt.setInt(5, tempFixture.getInt("round_id"));
+                        } else {
+                            preparedStmt.setNull(5, java.sql.Types.VARCHAR);
+                        }
+
+                        if (!tempFixture.get("venue_id").toString().equals("null")) {
+                            preparedStmt.setInt(6, tempFixture.getInt("venue_id"));
+                        } else {
+                            preparedStmt.setNull(6, java.sql.Types.VARCHAR);
+                        }
+
+                        preparedStmt.setString(7, tempFixture.getString("code"));
+                        preparedStmt.setString(8, tempFixture.getString("type"));
+
+                        preparedStmt.setString(9, tempFixture.get("icon").toString());
+
+                        if (!tempFixture.get("temp").toString().equals("null")) {
+                            preparedStmt.setInt(10, tempFixture.getInt("temp"));
+                        } else {
+                            preparedStmt.setNull(10, java.sql.Types.VARCHAR);
+                        }
+
+                        preparedStmt.setString(11, tempFixture.getString("status"));
+                        preparedStmt.setTime(12, Time.valueOf(tempFixture.getString("time")));
+                        preparedStmt.setDate(13, Date.valueOf(tempFixture.getString("date")));
+                        preparedStmt.setString(14, tempFixture.getString("timezone"));
+
+                        preparedStmt.setInt(15, tempFixture.getInt("minute"));
+                        preparedStmt.setInt(16, tempFixture.getInt("second"));
+                        preparedStmt.setInt(17, tempFixture.getInt("added_time"));
+                        preparedStmt.setInt(18, tempFixture.getInt("extra_minute"));
+                        preparedStmt.setInt(19, tempFixture.getInt("injury_time"));
+                        System.out.println(preparedStmt + "\n");
+                        // execute the preparedstatement
+                        preparedStmt.execute();
+
+                    } catch (SQLException ex) {
+
+                    }
+
+                    fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("bench"));
+                    fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("lineup"));
+                    fixturesEvents.addFixturesEvents(tempFixture.getJSONArray("events"));
+                    fixturesCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
+                    JSONObject localTeam = createFixtureTeam(tempFixture, true);
+                    JSONObject visitorTeam = createFixtureTeam(tempFixture, false);
+
+                    fixturesTeams.addFixturesTeams(localTeam);
+                    fixturesTeams.addFixturesTeams(visitorTeam);
+
+                }
+                if (maxPage <= i) {
+                    lastPage = true;
+                } else {
+                    i++;
+                }
+                
+                
+
+            }
+
+        
+
+    }
 
     private JSONObject createFixtureTeam(JSONObject fixture, boolean localTeam) {
 
@@ -424,8 +556,8 @@ public class Fixtures {
         sanitisedFixture.put("formations", fixtureFormations);
 
         if (!fixture.get("colors").toString().equals("null")) {
-            sanitisedFixture.put("localteam_color", fixture.getJSONObject("colors").getJSONObject("localteam").getString("color"));
-            sanitisedFixture.put("visitorteam_color", fixture.getJSONObject("colors").getJSONObject("visitorteam").getString("color"));
+            sanitisedFixture.put("localteam_color", fixture.getJSONObject("colors").getJSONObject("localteam").get("color").toString());
+            sanitisedFixture.put("visitorteam_color", fixture.getJSONObject("colors").getJSONObject("visitorteam").get("color").toString());
         } else {
             sanitisedFixture.put("localteam_color", "null");
             sanitisedFixture.put("visitorteam_color", "null");
@@ -436,7 +568,6 @@ public class Fixtures {
         } else {
             sanitisedFixture.put("winner_team_id", "null");
         }
-
         sanitisedFixture.put("events", fixture.getJSONObject("events").getJSONArray("data"));
         sanitisedFixture.put("bench", fixture.getJSONObject("bench").getJSONArray("data"));
         sanitisedFixture.put("lineup", fixture.getJSONObject("lineup").getJSONArray("data"));

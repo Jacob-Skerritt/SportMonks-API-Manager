@@ -4,7 +4,9 @@ import SportMonks.Endpoint;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -100,4 +102,77 @@ public class Venues {
 
     }
 
+    public void addVenue(int venueId) throws IOException, SQLException {
+        final String TOKEN = "IeJEyAVbp2IjoYzCdGpZBk7mWOAzSkRXHeiYYeOK9OWgOI0iNjaTcGAXsHfG";
+        JSONObject venue = new JSONObject();
+
+        try {
+            venue = Endpoint.getDataFromEndpoint("https://soccer.sportmonks.com/api/v2.0/venues/" + venueId + "?api_token=" + TOKEN).getJSONObject("data");
+        } catch (RuntimeException e) {
+            System.out.println(e);
+        }
+
+        try {
+            // the mysql insert statement
+            String query = " insert into venues (id, name, surface, city ,image)"
+                    + " values (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
+                    + " name=VALUES(name), surface=VALUES(surface), city=VALUES(city), image=VALUES(image)";
+
+            // create the mysql insert preparedstatement
+            PreparedStatement preparedStmt = db.prepareStatement(query);
+            preparedStmt.setInt(1, venue.getInt("id"));
+            preparedStmt.setString(2, venue.getString("name"));
+
+            if (!venue.get("surface").toString().equals("null")) {
+                preparedStmt.setString(3, venue.getString("surface"));
+            } else {
+                preparedStmt.setString(3, "Unknown");
+            }
+
+            if (!venue.get("city").toString().equals("null")) {
+                preparedStmt.setString(4, venue.getString("city"));
+            } else {
+                preparedStmt.setString(4, "N/A");
+            }
+
+            preparedStmt.setString(5, venue.get("image_path").toString());
+
+            // execute the preparedstatement
+            preparedStmt.execute();
+        } catch (SQLException ex) {
+        }
+    }
+
+    public boolean checkVenueExists(int venueId) throws IOException, SQLException {
+
+        try {
+            // the mysql insert statement
+            String query = " SELECT COUNT(*) from venues where id = ?";
+
+            PreparedStatement preparedStmt = db.prepareStatement(query);
+            preparedStmt.setInt(1, venueId);
+
+            // execute the query, and get a java resultset
+            ResultSet rs = preparedStmt.executeQuery();
+
+            // iterate through the java resultset
+            if (rs.isBeforeFirst()) {
+
+                while (rs.next()) {
+                    int count = rs.getInt("COUNT(*)");
+
+                    if(count == 0)
+                        return false;
+                    else 
+                        return true;
+
+                }
+                preparedStmt.close();
+                
+            }
+            
+        } catch (SQLException ex) {
+        }
+        return false;
+    }
 }
