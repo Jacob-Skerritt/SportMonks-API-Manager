@@ -27,6 +27,9 @@ public class Players {
     }
 
     public void managePlayers(String playersEndpoint) throws SQLException, IOException {
+        // HI HI
+        //Hi HI Take 2
+
 
         JSONObject teamsSeasonsIds = teamsSeasons.getTeamsSeasonsIds();
         JSONArray teamsSeasonsArray = teamsSeasonsIds.getJSONArray("data");
