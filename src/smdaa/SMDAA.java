@@ -54,69 +54,71 @@ public class SMDAA {
             LocalDateTime livescoreCheckTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 07, 00);
             livescoreCheckTime = livescoreCheckTime.minusDays(1);
             
+           dataMaitenance(db);
             
-           while (true) {
-                
-                dataMaitenance(db);
-                if(maintenanceTime.isBefore(currentTime)){
-                    
-                    dataMaitenance(db);
-                    System.out.println("i was here");
-                    maintenanceTime = maintenanceTime.plusDays(7);
-                    
-                }
-                
-                if(livescoreCheckTime.isBefore(currentTime)){
-                    
-                    System.out.println("Getting livescoreTimes" + LocalDateTime.now() + "\n");
-                    livescoreTime = fixtures.getLivescoreTimes(livescoresEndpoint3);
-                    livescoreCheckTime = livescoreCheckTime.plusDays(1);
-                    
-                }
-                    
-                
-                
-                if(currentTime.isAfter(livescoreTime[0]) && currentTime.isBefore(livescoreTime[1]))
-                {    
-                    
-                    if (currentTime.isAfter(futureTime)) {
-                        System.out.println("\nCurrent Time :" + currentTime + "\nFutureTime: " + futureTime + "\n");
-                        fixtures.manageLivescores(livescoresEndpoint);
-                        Thread.sleep(1000);
-                        futureTime = LocalDateTime.now().plusSeconds(3);
-                         
-
-                        
-                    }
-
-                    
-                }
-                
-                if(currentTime.isBefore(maintenanceTime.minusHours(1))){
-                    
-                    if(currentTime.isAfter(livescoreTime[1].plusMinutes(30))){
-                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
-                        Thread.sleep(3600 * 1000);
-                        
-                        
-                    }
-                    
-                    if(currentTime.isBefore(livescoreTime[0].minusMinutes(90)))
-                    {
-                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
-                        Thread.sleep(3600 * 1000);
-                    }  
-                    
-                    
-                }else if(currentTime.isBefore(maintenanceTime.minusMinutes(1))){
-                    Thread.sleep(60*1000);
-                }
-
-              
-              currentTime = LocalDateTime.now();
-              
             
-        }
+//           while (true) {
+//                
+//                
+//                if(maintenanceTime.isBefore(currentTime)){
+//                    
+//                    dataMaitenance(db);
+//                    System.out.println("i was here");
+//                    maintenanceTime = maintenanceTime.plusDays(7);
+//                    
+//                }
+//                
+//                if(livescoreCheckTime.isBefore(currentTime)){
+//                    
+//                    System.out.println("Getting livescoreTimes" + LocalDateTime.now() + "\n");
+//                    livescoreTime = fixtures.getLivescoreTimes(livescoresEndpoint3);
+//                    livescoreCheckTime = livescoreCheckTime.plusDays(1);
+//                    
+//                }
+//                    
+//                
+//                
+//                if(currentTime.isAfter(livescoreTime[0]) && currentTime.isBefore(livescoreTime[1]))
+//                {    
+//                    
+//                    if (currentTime.isAfter(futureTime)) {
+//                        System.out.println("\nCurrent Time :" + currentTime + "\nFutureTime: " + futureTime + "\n");
+//                        fixtures.manageLivescores(livescoresEndpoint);
+//                        Thread.sleep(1000);
+//                        futureTime = LocalDateTime.now().plusSeconds(3);
+//                         
+//
+//                        
+//                    }
+//
+//                    
+//                }
+//                
+//                if(currentTime.isBefore(maintenanceTime.minusHours(1))){
+//                    
+//                    if(currentTime.isAfter(livescoreTime[1].plusMinutes(30))){
+//                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
+//                        Thread.sleep(3600 * 1000);
+//                        
+//                        
+//                    }
+//                    
+//                    if(currentTime.isBefore(livescoreTime[0].minusMinutes(90)))
+//                    {
+//                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
+//                        Thread.sleep(3600 * 1000);
+//                    }  
+//                    
+//                    
+//                }else if(currentTime.isBefore(maintenanceTime.minusMinutes(1))){
+//                    Thread.sleep(60*1000);
+//                }
+//
+//              
+//              currentTime = LocalDateTime.now();
+//              
+//            
+//            }
         }
     }
     
@@ -156,9 +158,9 @@ public class SMDAA {
             //rounds.manageRounds(roundsEndpoint);
             //teams.manageTeams(teamsEndpoint);
             
-            players.managePlayers(playersEndpoint);
-            //fixtures.manageFixtures(fixturesEndpoint);
-            //fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
+            //players.managePlayers(playersEndpoint);
+            fixtures.manageFixtures(fixturesEndpoint);
+            fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
         
     }
 }
