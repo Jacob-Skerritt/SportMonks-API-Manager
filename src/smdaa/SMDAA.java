@@ -155,7 +155,7 @@ public class SMDAA {
             //stages.manageStages(stagesEndpoint);
             //rounds.manageRounds(roundsEndpoint);
             //teams.manageTeams(teamsEndpoint);
-            System.out.println("hi hi");
+            
             players.managePlayers(playersEndpoint);
             //fixtures.manageFixtures(fixturesEndpoint);
             //fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
