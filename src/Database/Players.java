@@ -73,10 +73,26 @@ public class Players {
 
                         try {
                             // the mysql insert statement
-                            String query = " insert into players (id, country_id, firstname, lastname, common_name, nationality, date_of_birth, image, height, weight)"
-                                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ? ,?) ON DUPLICATE KEY UPDATE"
-                                    + " country_id=VALUES(country_id), firstname=VALUES(firstname), lastname=VALUES(lastname), common_name=VALUES(common_name),"
+                            String query = " insert into players (id, country_id, firstname, lastname, common_name, display_name, nationality, date_of_birth, image, height, weight)"
+                                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?) ON DUPLICATE KEY UPDATE"
+                                    + " country_id=VALUES(country_id), firstname=VALUES(firstname), lastname=VALUES(lastname),"
+                                    + " common_name=VALUES(common_name), display_name=VALUES(display_name),"
                                     + " nationality=VALUES(nationality), date_of_birth=VALUES(date_of_birth), image=VALUES(image), height=VALUES(height), weight=VALUES(weight)";
+                            
+                            
+                            String[] commonName;
+                            String[] displayName;
+                            String name;
+                            if (!player.get("display_name").toString().equals("null") && !player.get("common_name").toString().equals("null")){
+                                commonName = player.getString("common_name").split(" ");
+                                displayName = player.getString("display_name").split(" ");
+                                displayName[0] = commonName[0];
+                                name = String.join(" ", displayName);
+                            }else
+                                name = "N/A";
+                            
+                            
+                            
 
                             // create the mysql insert preparedstatement
                             PreparedStatement preparedStmt = db.prepareStatement(query);
@@ -105,11 +121,13 @@ public class Players {
                             } else {
                                 preparedStmt.setString(5, "N/A");
                             }
+                            
+                            preparedStmt.setString(6, name);
 
                             if (!player.get("nationality").toString().equals("null")) {
-                                preparedStmt.setString(6, player.getString("nationality"));
+                                preparedStmt.setString(7, player.getString("nationality"));
                             } else {
-                                preparedStmt.setNull(6, java.sql.Types.VARCHAR);
+                                preparedStmt.setNull(7, java.sql.Types.VARCHAR);
                             }
 
                             if (!player.get("birthdate").toString().equals("null")) {
@@ -117,27 +135,27 @@ public class Players {
                                 String date = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
 
                                 System.out.println(date);
-                                preparedStmt.setDate(7, Date.valueOf(date));
-                            } else {
-                                preparedStmt.setNull(7, java.sql.Types.VARCHAR);
-                            }
-
-                            if (!player.get("image_path").toString().equals("null")) {
-                                preparedStmt.setString(8, player.get("image_path").toString());
+                                preparedStmt.setDate(8, Date.valueOf(date));
                             } else {
                                 preparedStmt.setNull(8, java.sql.Types.VARCHAR);
                             }
 
-                            if (!player.get("height").toString().equals("null")) {
-                                preparedStmt.setString(9, player.getString("height"));
+                            if (!player.get("image_path").toString().equals("null")) {
+                                preparedStmt.setString(9, player.get("image_path").toString());
                             } else {
                                 preparedStmt.setNull(9, java.sql.Types.VARCHAR);
                             }
 
-                            if (!player.get("weight").toString().equals("null")) {
-                                preparedStmt.setString(10, player.getString("weight"));
+                            if (!player.get("height").toString().equals("null")) {
+                                preparedStmt.setString(10, player.getString("height"));
                             } else {
                                 preparedStmt.setNull(10, java.sql.Types.VARCHAR);
+                            }
+
+                            if (!player.get("weight").toString().equals("null")) {
+                                preparedStmt.setString(11, player.getString("weight"));
+                            } else {
+                                preparedStmt.setNull(11, java.sql.Types.VARCHAR);
                             }
 
                             // execute the preparedstatement
