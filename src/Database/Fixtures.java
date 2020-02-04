@@ -454,8 +454,10 @@ public class Fixtures {
 
         if (localTeam) {
             team = "localteam";
+            returnFixture.put("home_team", true);
         } else {
             team = "visitorteam";
+            returnFixture.put("home_team", false);
         }
 
         returnFixture.put("fixture_id", fixture.getInt("id"));

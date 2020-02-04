@@ -53,11 +53,11 @@ public class FixturesTeams {
   
         try {
             // the mysql insert statement
-            String query = " insert into fixtures_teams(fixture_id, team_id, winning_team, score, pen_score, colour, formation, total_shots,"
+            String query = " insert into fixtures_teams(fixture_id, team_id, winning_team, home_team, score, pen_score, colour, formation, total_shots,"
                     + " shots_on_goal, shots_blocked, total_passes, accurate_passes, total_attacks, dangerous_attacks, fouls, corners,"
                     + " offsides, possessiontime, yellowcards, redcards, yellowredcards, saves, substitutions, penalties)"
-                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
-                    + " fixture_id=VALUES(fixture_id), team_id=VALUES(team_id), winning_team=VALUES(winning_team), score=VALUES(score), pen_score=VALUES(pen_score),"
+                    + " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
+                    + " fixture_id=VALUES(fixture_id), team_id=VALUES(team_id), winning_team=VALUES(winning_team), home_team=VALUES(home_team), score=VALUES(score), pen_score=VALUES(pen_score),"
                     + " colour=VALUES(colour), formation=VALUES(formation), total_passes=VALUES(total_passes),"
                     + " total_shots=VALUES(total_shots), shots_on_goal=VALUES(shots_on_goal), shots_blocked=VALUES(shots_blocked),"
                     + " total_attacks=VALUES(total_attacks), dangerous_attacks=VALUES(dangerous_attacks), fouls=VALUES(fouls), corners=VALUES(corners),"
@@ -75,111 +75,116 @@ public class FixturesTeams {
                 preparedStmt.setBoolean(3, teamObject.getBoolean("winning_team"));
             else
                 preparedStmt.setNull(3, java.sql.Types.VARCHAR);
+            
+            if(!teamObject.get("home_team").toString().equals("null"))
+                preparedStmt.setBoolean(4, teamObject.getBoolean("home_team"));
+            else
+                preparedStmt.setNull(4, java.sql.Types.VARCHAR);
 
             if(!teamObject.get("score").toString().equals("null"))
-                preparedStmt.setInt(4, teamObject.getInt("score"));
-            else
-                preparedStmt.setInt(4, 0);
-
-           if(!teamObject.get("pen_score").toString().equals("null"))
-                preparedStmt.setInt(5, teamObject.getInt("pen_score"));
+                preparedStmt.setInt(5, teamObject.getInt("score"));
             else
                 preparedStmt.setInt(5, 0);
 
-            if(!teamObject.get("color").toString().equals("null"))
-                preparedStmt.setString(6, teamObject.get("color").toString());
+           if(!teamObject.get("pen_score").toString().equals("null"))
+                preparedStmt.setInt(6, teamObject.getInt("pen_score"));
             else
-                preparedStmt.setNull(6, java.sql.Types.VARCHAR);
+                preparedStmt.setInt(6, 0);
 
-            if(!teamObject.get("formation").toString().equals("null"))
-                preparedStmt.setString(7, teamObject.getString("formation"));
+            if(!teamObject.get("color").toString().equals("null"))
+                preparedStmt.setString(7, teamObject.get("color").toString());
             else
                 preparedStmt.setNull(7, java.sql.Types.VARCHAR);
 
-            if(checkShots && shotsObject.has("total") && !shotsObject.get("total").toString().equals("null"))
-                preparedStmt.setInt(8, shotsObject.getInt("total"));
+            if(!teamObject.get("formation").toString().equals("null"))
+                preparedStmt.setString(8, teamObject.getString("formation"));
             else
-                preparedStmt.setInt(8, 0);
+                preparedStmt.setNull(8, java.sql.Types.VARCHAR);
 
-            if(checkShots && shotsObject.has("ongoal") && !shotsObject.get("ongoal").toString().equals("null"))
-                preparedStmt.setInt(9, shotsObject.getInt("ongoal"));
+            if(checkShots && shotsObject.has("total") && !shotsObject.get("total").toString().equals("null"))
+                preparedStmt.setInt(9, shotsObject.getInt("total"));
             else
                 preparedStmt.setInt(9, 0);
 
-            if(checkShots && shotsObject.has("blocked") && !shotsObject.get("blocked").toString().equals("null"))
-                preparedStmt.setInt(10, shotsObject.getInt("blocked"));
+            if(checkShots && shotsObject.has("ongoal") && !shotsObject.get("ongoal").toString().equals("null"))
+                preparedStmt.setInt(10, shotsObject.getInt("ongoal"));
             else
                 preparedStmt.setInt(10, 0);
 
-            if(checkPasses && passesObject.has("total") && !passesObject.get("total").toString().equals("null"))
-                preparedStmt.setInt(11, passesObject.getInt("total"));
+            if(checkShots && shotsObject.has("blocked") && !shotsObject.get("blocked").toString().equals("null"))
+                preparedStmt.setInt(11, shotsObject.getInt("blocked"));
             else
                 preparedStmt.setInt(11, 0);
 
-            if(checkPasses && passesObject.has("accurate") && !passesObject.get("accurate").toString().equals("null"))
-                preparedStmt.setInt(12, passesObject.getInt("accurate"));
+            if(checkPasses && passesObject.has("total") && !passesObject.get("total").toString().equals("null"))
+                preparedStmt.setInt(12, passesObject.getInt("total"));
             else
                 preparedStmt.setInt(12, 0);
 
-            if(checkAttacks && attacksObject.has("attacks") && !attacksObject.get("attacks").toString().equals("null"))
-                preparedStmt.setInt(13, attacksObject.getInt("attacks"));
+            if(checkPasses && passesObject.has("accurate") && !passesObject.get("accurate").toString().equals("null"))
+                preparedStmt.setInt(13, passesObject.getInt("accurate"));
             else
                 preparedStmt.setInt(13, 0);
 
-            if(checkAttacks && attacksObject.has("attacks") && !attacksObject.get("dangerous_attacks").toString().equals("null"))
-                preparedStmt.setInt(14, attacksObject.getInt("dangerous_attacks"));
+            if(checkAttacks && attacksObject.has("attacks") && !attacksObject.get("attacks").toString().equals("null"))
+                preparedStmt.setInt(14, attacksObject.getInt("attacks"));
             else
                 preparedStmt.setInt(14, 0);
 
-            if(checkStats && !statsObject.get("fouls").toString().equals("null"))
-                preparedStmt.setInt(15, statsObject.getInt("fouls"));
+            if(checkAttacks && attacksObject.has("attacks") && !attacksObject.get("dangerous_attacks").toString().equals("null"))
+                preparedStmt.setInt(15, attacksObject.getInt("dangerous_attacks"));
             else
                 preparedStmt.setInt(15, 0);
 
-            if(checkStats && !statsObject.get("corners").toString().equals("null"))
-                preparedStmt.setInt(16, statsObject.getInt("corners"));
+            if(checkStats && !statsObject.get("fouls").toString().equals("null"))
+                preparedStmt.setInt(16, statsObject.getInt("fouls"));
             else
                 preparedStmt.setInt(16, 0);
 
-            if(checkStats && !statsObject.get("offsides").toString().equals("null"))
-                preparedStmt.setInt(17, statsObject.getInt("offsides"));
+            if(checkStats && !statsObject.get("corners").toString().equals("null"))
+                preparedStmt.setInt(17, statsObject.getInt("corners"));
             else
                 preparedStmt.setInt(17, 0);
 
-            if(checkStats && !statsObject.get("possessiontime").toString().equals("null"))
-                preparedStmt.setInt(18, statsObject.getInt("possessiontime"));
+            if(checkStats && !statsObject.get("offsides").toString().equals("null"))
+                preparedStmt.setInt(18, statsObject.getInt("offsides"));
             else
                 preparedStmt.setInt(18, 0);
 
-            if(checkStats && !statsObject.get("yellowcards").toString().equals("null"))
-                preparedStmt.setInt(19, statsObject.getInt("yellowcards"));
+            if(checkStats && !statsObject.get("possessiontime").toString().equals("null"))
+                preparedStmt.setInt(19, statsObject.getInt("possessiontime"));
             else
                 preparedStmt.setInt(19, 0);
 
-            if(checkStats && !statsObject.get("redcards").toString().equals("null"))
-                preparedStmt.setInt(20, statsObject.getInt("redcards"));
+            if(checkStats && !statsObject.get("yellowcards").toString().equals("null"))
+                preparedStmt.setInt(20, statsObject.getInt("yellowcards"));
             else
                 preparedStmt.setInt(20, 0);
 
-            if(checkStats && !statsObject.get("yellowredcards").toString().equals("null"))
-                preparedStmt.setInt(21, statsObject.getInt("yellowredcards"));
+            if(checkStats && !statsObject.get("redcards").toString().equals("null"))
+                preparedStmt.setInt(21, statsObject.getInt("redcards"));
             else
                 preparedStmt.setInt(21, 0);
 
-            if(checkStats && !statsObject.get("saves").toString().equals("null"))
-                preparedStmt.setInt(22, statsObject.getInt("saves"));
+            if(checkStats && !statsObject.get("yellowredcards").toString().equals("null"))
+                preparedStmt.setInt(22, statsObject.getInt("yellowredcards"));
             else
                 preparedStmt.setInt(22, 0);
 
-            if(checkStats && !statsObject.get("substitutions").toString().equals("null"))
-                preparedStmt.setInt(23, statsObject.getInt("substitutions"));
+            if(checkStats && !statsObject.get("saves").toString().equals("null"))
+                preparedStmt.setInt(23, statsObject.getInt("saves"));
             else
                 preparedStmt.setInt(23, 0);
 
-            if(checkStats && !statsObject.get("penalties").toString().equals("null"))
-                preparedStmt.setInt(24, statsObject.getInt("penalties"));
+            if(checkStats && !statsObject.get("substitutions").toString().equals("null"))
+                preparedStmt.setInt(24, statsObject.getInt("substitutions"));
             else
-                preparedStmt.setInt(24, 0); 
+                preparedStmt.setInt(24, 0);
+
+            if(checkStats && !statsObject.get("penalties").toString().equals("null"))
+                preparedStmt.setInt(25, statsObject.getInt("penalties"));
+            else
+                preparedStmt.setInt(25, 0); 
 
 
 

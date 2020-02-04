@@ -49,22 +49,26 @@ public class SMDAA {
             LocalDateTime currentTime = LocalDateTime.now();
             LocalDateTime futureTime = currentTime.plusSeconds(5);
             LocalDateTime maintenanceTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 00, 50);
-            System.out.println(maintenanceTime);
+            
             LocalDateTime[] livescoreTime = new LocalDateTime[2];
             LocalDateTime livescoreCheckTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 07, 00);
             livescoreCheckTime = livescoreCheckTime.minusDays(1);
             
             
-            while (true) {
+           while (true) {
                 
-                
+                dataMaitenance(db);
                 if(maintenanceTime.isBefore(currentTime)){
+                    
                     dataMaitenance(db);
+                    System.out.println("i was here");
                     maintenanceTime = maintenanceTime.plusDays(7);
                     
                 }
                 
                 if(livescoreCheckTime.isBefore(currentTime)){
+                    
+                    System.out.println("Getting livescoreTimes" + LocalDateTime.now() + "\n");
                     livescoreTime = fixtures.getLivescoreTimes(livescoresEndpoint3);
                     livescoreCheckTime = livescoreCheckTime.plusDays(1);
                     
@@ -76,10 +80,13 @@ public class SMDAA {
                 {    
                     
                     if (currentTime.isAfter(futureTime)) {
-                        fixtures.manageLivescores(livescoresEndpoint);
-                        futureTime = futureTime.plusSeconds(3);
-
                         System.out.println("\nCurrent Time :" + currentTime + "\nFutureTime: " + futureTime + "\n");
+                        fixtures.manageLivescores(livescoresEndpoint);
+                        Thread.sleep(1000);
+                        futureTime = LocalDateTime.now().plusSeconds(3);
+                         
+
+                        
                     }
 
                     
@@ -88,25 +95,28 @@ public class SMDAA {
                 if(currentTime.isBefore(maintenanceTime.minusHours(1))){
                     
                     if(currentTime.isAfter(livescoreTime[1].plusMinutes(30))){
-                        System.out.println("night night after");
-                        Thread.sleep(10 * 1000);
+                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
+                        Thread.sleep(3600 * 1000);
+                        
                         
                     }
                     
                     if(currentTime.isBefore(livescoreTime[0].minusMinutes(90)))
                     {
-                        System.out.println("night night before");
-                        Thread.sleep(10 * 1000);
+                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
+                        Thread.sleep(3600 * 1000);
                     }  
-                }else if(currentTime.isBefore(maintenanceTime.minusMinutes(5))){
                     
+                    
+                }else if(currentTime.isBefore(maintenanceTime.minusMinutes(1))){
+                    Thread.sleep(60*1000);
                 }
-                
-                currentTime = LocalDateTime.now();
-                
-                System.out.println("here we are");
-                
-            }
+
+              
+              currentTime = LocalDateTime.now();
+              
+            
+        }
         }
     }
     
@@ -137,17 +147,18 @@ public class SMDAA {
             Players players = new Players(db);
             Fixtures fixtures = new Fixtures(db);
         
-            continents.manageContinents(continentEndpoint);
-            countries.manageCountires(countriesEndpoint);
-            league.manageLeagues(leaguesEndpoint);
-            seasons.manageSeasons(seasonsEndpoint);
-            venues.manageVenues(venuesEndpoint);
-            stages.manageStages(stagesEndpoint);
-            rounds.manageRounds(roundsEndpoint);
-            teams.manageTeams(teamsEndpoint);
+            //continents.manageContinents(continentEndpoint);
+            //countries.manageCountires(countriesEndpoint);
+            //league.manageLeagues(leaguesEndpoint);
+            //seasons.manageSeasons(seasonsEndpoint);
+            //venues.manageVenues(venuesEndpoint);
+            //stages.manageStages(stagesEndpoint);
+            //rounds.manageRounds(roundsEndpoint);
+            //teams.manageTeams(teamsEndpoint);
+            System.out.println("hi hi");
             players.managePlayers(playersEndpoint);
-            fixtures.manageFixtures(fixturesEndpoint);
-            fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
+            //fixtures.manageFixtures(fixturesEndpoint);
+            //fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
         
     }
 }
