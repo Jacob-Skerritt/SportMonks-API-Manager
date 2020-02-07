@@ -55,7 +55,6 @@ public class Leagues {
                 JSONObject pagination = metaData.getJSONObject("pagination");
                 maxPage = pagination.getInt("total_pages");
             }
-            System.out.println(leagues.toString());
             for (Object obj : leaguesArray) {
                 JSONObject tempObject = (JSONObject) obj;
 

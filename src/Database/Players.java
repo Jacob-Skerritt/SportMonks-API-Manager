@@ -83,19 +83,6 @@ public class Players {
                                     + " nationality=VALUES(nationality), date_of_birth=VALUES(date_of_birth), image=VALUES(image), height=VALUES(height), weight=VALUES(weight)";
                             
                             
-                            String[] commonName;
-                            String[] displayName;
-                            String name;
-                            if (!player.get("display_name").toString().equals("null") && !player.get("common_name").toString().equals("null")){
-                                commonName = player.getString("common_name").split(" ");
-                                displayName = player.getString("display_name").split(" ");
-                                displayName[0] = commonName[0];
-                                name = String.join(" ", displayName);
-                            }else
-                                name = "N/A";
-                            
-                            
-                            
 
                             // create the mysql insert preparedstatement
                             PreparedStatement preparedStmt = db.prepareStatement(query);
@@ -125,7 +112,11 @@ public class Players {
                                 preparedStmt.setString(5, "N/A");
                             }
                             
-                            preparedStmt.setString(6, name);
+                             if (!player.get("display_name").toString().equals("null")) {
+                                preparedStmt.setString(6, player.getString("display_name"));
+                            } else {
+                                preparedStmt.setString(6, "N/A");
+                            }
 
                             if (!player.get("nationality").toString().equals("null")) {
                                 preparedStmt.setString(7, player.getString("nationality"));
@@ -137,7 +128,7 @@ public class Players {
                                 String[] dateArray = player.getString("birthdate").split("/");
                                 String date = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
 
-                                System.out.println(date);
+                                
                                 preparedStmt.setDate(8, Date.valueOf(date));
                             } else {
                                 preparedStmt.setNull(8, java.sql.Types.VARCHAR);

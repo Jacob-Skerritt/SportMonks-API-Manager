@@ -23,12 +23,14 @@ public class FixturesEvents {
     
     private Connection db;
     private HashMap<String, Integer> events;
+    private FixturesPlayers fixturePlayer;
     
     public FixturesEvents(){}
     
     public FixturesEvents(Connection db){
         this.db= db;
         this.events = new HashMap<>();
+        this.fixturePlayer = new FixturesPlayers(db);
     }
     
     public  void addFixturesEvents(JSONArray fixturesEvents) throws IOException, SQLException{
@@ -89,6 +91,18 @@ public class FixturesEvents {
             }catch (SQLException ex) {
 
             }
+            
+            if(tempObject.get("type").equals("substitution"))
+            {
+                if(!tempObject.get("player_id").toString().equals("null") && !tempObject.get("player_id").toString().equals("null")){
+                    int position = fixturePlayer.getPlayerFormationPosition(tempObject.getInt("related_player_id"), tempObject.getInt("fixture_id"));
+                    fixturePlayer.setPlayerFormationPosition(tempObject.getInt("player_id"), tempObject.getInt("fixture_id"), position);
+                    fixturePlayer.setPlayerFormationPosition(tempObject.getInt("related_player_id"), tempObject.getInt("fixture_id"), 0);
+                }
+                
+            }
+            
+            
 
         }
     }

@@ -164,7 +164,7 @@ public class Fixtures {
 
     public void manageLivescores(String livescoresEndpoint) throws IOException, SQLException {
 
-        System.out.println("Started now: " + LocalDateTime.now());
+        
 
         boolean lastPage = false;
         int i = 1;
@@ -180,9 +180,6 @@ public class Fixtures {
                 System.out.println(e);
                 break;
             }
-
-            System.out.println("lenght of JSONObject: " + fixtures.toString().length());
-            System.out.println("After API data: " + LocalDateTime.now());
 
             JSONArray fixturesArray = fixtures.getJSONArray("data");
             JSONObject metaData = fixtures.getJSONObject("meta");
@@ -278,8 +275,6 @@ public class Fixtures {
 
         }
 
-        System.out.println("Finished now: " + LocalDateTime.now());
-
     }
 
     //The following method is a requirement for the group project and would not be used in a general context.
@@ -372,7 +367,7 @@ public class Fixtures {
                     preparedStmt.setInt(17, tempFixture.getInt("added_time"));
                     preparedStmt.setInt(18, tempFixture.getInt("extra_minute"));
                     preparedStmt.setInt(19, tempFixture.getInt("injury_time"));
-                    System.out.println(preparedStmt + "\n");
+                   
                     // execute the preparedstatement
                     preparedStmt.execute();
 
@@ -416,7 +411,6 @@ public class Fixtures {
         }
         
         JSONArray livescoreFixtures = fixtures.getJSONArray("data");
-        System.out.println("hi");
         for(Object obj: livescoreFixtures){
             
             JSONObject lsObject = (JSONObject) obj;
@@ -433,7 +427,6 @@ public class Fixtures {
             
             if(dt.isAfter(max))
                 max = dt;
-            System.out.println(dt);
             }
         }
         max = max.plusHours(2);

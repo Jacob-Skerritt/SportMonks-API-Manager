@@ -8,6 +8,7 @@ package Database;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -205,6 +206,53 @@ public class FixturesPlayers {
         }
 
         
+    }
+    
+    public int getPlayerFormationPosition(int playerId, int fixtureId){
+        try {
+            // the mysql insert statement
+            String query = "SELECT formation_position from fixtures_players where player_id = ? AND fixture_id = ?";
+
+            try (PreparedStatement preparedStmt = db.prepareStatement(query)) {
+                preparedStmt.setInt(1, playerId);
+                preparedStmt.setInt(2, fixtureId);
+                
+                // execute the query, and get a java resultset
+                ResultSet rs = preparedStmt.executeQuery();
+                
+                // iterate through the java resultset
+                
+                
+                while (rs.next()) {               
+                    return rs.getInt("formation_position");
+                    
+                }
+            }
+                
+            
+            
+        } catch (SQLException ex) {
+        }
+        return 0;
+    }
+    
+    public void setPlayerFormationPosition(int playerId, int fixtureId, int position){
+        try {
+            // the mysql insert statement
+            String query = "update fixtures_players set formation_position = ? where player_id = ? and fixture_id = ?";
+
+            PreparedStatement preparedStmt = db.prepareStatement(query);
+            if(position >0)
+                preparedStmt.setInt(1, position);
+            else
+                preparedStmt.setNull(1, java.sql.Types.VARCHAR);
+            preparedStmt.setInt(2, playerId);
+            preparedStmt.setInt(3, fixtureId);
+
+             preparedStmt.execute();
+            
+        } catch (SQLException ex) {
+        }
     }
     
     
