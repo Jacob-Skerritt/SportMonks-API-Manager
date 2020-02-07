@@ -1,0 +1,326 @@
+/* In-game Ratings database design and implementation, created by Jacob Skerritt */
+
+DROP DATABASE IF EXISTS in_game_ratings;
+CREATE DATABASE in_game_ratings;
+
+USE in_game_ratings;
+
+DROP TABLE IF EXISTS continents;
+CREATE TABLE continents(
+id INT NOT NULL PRIMARY KEY,
+name VARCHAR(20) NOT NULL);
+
+
+DROP TABLE IF EXISTS countries;
+CREATE TABLE countries(
+id INT NOT NULL PRIMARY KEY,
+name VARCHAR(80) NOT NULL,
+continent_id INT NOT NULL,
+flag VARCHAR(150) NOT NULL,
+FOREIGN KEY(continent_id) REFERENCES continents(id));
+
+
+DROP TABLE IF EXISTS venues;
+CREATE TABLE venues(
+id INT NOT NULL PRIMARY KEY,
+name VARCHAR(90) NOT NULL,
+surface VARCHAR(30),
+city VARCHAR(100),
+image VARCHAR(80));	
+
+
+DROP TABLE IF EXISTS leagues;
+CREATE TABLE leagues(
+id INT NOT NULL PRIMARY KEY,
+name VARCHAR(80) NOT NULL,
+active BOOLEAN NOT NULL,
+type VARCHAR(30),
+country_id INT,
+logo VARCHAR(70),
+is_cup BOOLEAN,
+standings BOOLEAN,
+FOREIGN KEY(country_id) REFERENCES countries(id));
+
+
+DROP TABLE IF EXISTS seasons;
+CREATE TABLE seasons(
+id INT NOT NULL PRIMARY KEY,
+year VARCHAR(15) NOT NULL,
+active BOOLEAN,
+league_id INT NOT NULL,
+FOREIGN KEY(league_id) REFERENCES leagues(id));
+
+
+DROP TABLE IF EXISTS stages;
+CREATE TABLE stages(
+id INT PRIMARY KEY,
+name VARCHAR(40),
+type VARCHAR(30),
+league_id INT,
+season_id INT,
+FOREIGN KEY(league_id) REFERENCES leagues(id),
+FOREIGN KEY(season_id) REFERENCES seasons(id));
+
+
+DROP TABLE IF EXISTS rounds;
+CREATE TABLE rounds(
+id INT NOT NULL PRIMARY KEY,
+name INT,
+start_date DATE,
+end_date DATE,
+league_id INT NOT NULL,
+season_id INT NOT NULL,
+stage_id INT NOT NULL,
+FOREIGN KEY(league_id) REFERENCES leagues(id),
+FOREIGN KEY(season_id) REFERENCES seasons(id),
+FOREIGN KEY(stage_id) REFERENCES stages(id));
+
+
+DROP TABLE IF EXISTS teams;
+CREATE TABLE teams(
+id INT NOT NULL PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+short_code VARCHAR(20),
+country_id INT NOT NULL,
+national_team BOOLEAN,
+founded INT,
+logo VARCHAR(80),
+venue_id INT,
+manager VARCHAR(150),
+FOREIGN KEY(country_id) REFERENCES countries(id),
+FOREIGN KEY(venue_id) REFERENCES venues(id));
+
+DROP TABLE IF EXISTS teams_seasons;
+CREATE TABLE teams_seasons(
+team_id INT NOT NULL,
+season_id INT NOT NULL,
+PRIMARY KEY(team_id, season_id),
+FOREIGN KEY (team_id) REFERENCES teams(id),
+FOREIGN KEY (season_id) REFERENCES seasons(id));
+
+
+DROP TABLE IF EXISTS players;
+CREATE TABLE players(
+id INT NOT NULL PRIMARY KEY,
+country_id INT,
+firstname VARCHAR(100) NOT NULL,
+lastname VARCHAR(100) NOT NULL,
+common_name VARCHAR (102) NOT NULL,
+display_name VARCHAR(100),
+nationality VARCHAR(80),
+date_of_birth DATE,
+image VARCHAR(90),
+height VARCHAR(6),
+weight VARCHAR(6),
+FOREIGN KEY(country_id) REFERENCES countries(id));
+
+
+
+DROP TABLE IF EXISTS teams_players;
+CREATE TABLE teams_players(
+team_id INT NOT NULL,
+player_id INT NOT NULL,
+season_id INT NOT NULL,
+position_id INT,
+PRIMARY KEY(team_id, player_id, season_id),
+FOREIGN KEY(team_id) REFERENCES teams(id),
+FOREIGN KEY(player_id) REFERENCES players(id),
+FOREIGN KEY(season_id) REFERENCES seasons(id));
+
+
+DROP TABLE IF EXISTS fixtures;
+CREATE TABLE fixtures(
+id INT NOT NULL PRIMARY KEY,
+league_id INT NOT NULL,
+season_id INT NOT NULL,
+stage_id INT,
+round_id INT,
+venue_id INT,
+weather_code VARCHAR(30),
+weather_type VARCHAR(60),
+weather_report_image VARCHAR(90),
+temperature DOUBLE,
+fixture_status VARCHAR(10),
+starting_time TIME,
+starting_date DATE,
+timezone VARCHAR(10),
+time_minute INT,
+time_second INT,
+added_time INT,
+extra_time INT,
+injury_time INT,
+FOREIGN KEY(league_id) REFERENCES leagues(id),
+FOREIGN KEY(season_id) REFERENCES seasons(id),
+FOREIGN KEY(stage_id) REFERENCES stages(id),
+FOREIGN KEY(round_id) REFERENCES rounds(id),
+FOREIGN KEY(venue_id) REFERENCES venues(id));
+
+
+DROP TABLE IF EXISTS fixtures_teams;
+CREATE TABLE fixtures_teams(
+fixture_id INT NOT NULL,
+team_id INT NOT NULL,
+winning_team BOOLEAN,
+home_team BOOLEAN,
+score INT DEFAULT 0,
+pen_score INT DEFAULT 0,
+colour VARCHAR(10),
+formation VARCHAR(10),
+total_shots INT,
+shots_on_goal INT,
+shots_blocked INT,
+total_passes INT,
+accurate_passes INT,
+total_attacks INT,
+dangerous_attacks INT,
+fouls INT,
+corners INT,
+offsides INT,
+possessiontime INT,
+yellowcards INT,
+redcards INT,
+yellowredcards INT,
+saves INT,
+substitutions INT, 
+penalties INT,	
+PRIMARY KEY(fixture_id, team_id),
+FOREIGN KEY(fixture_id) REFERENCES fixtures(id),
+FOREIGN KEY(team_id) REFERENCES teams(id));
+
+
+DROP TABLE IF EXISTS fixtures_players;
+CREATE TABLE fixtures_players(
+fixture_id INT NOT NULL,
+player_id INT NOT NULL,
+team_id INT NOT NULL,
+position ENUM('G', 'D', 'M', 'A'),
+type VARCHAR(20),
+formation_position INT,
+captain BOOLEAN,
+minutes_played INT,
+pass_accuracy INT,
+total_shots INT,
+shots_on_goal INT,
+saves INT,
+goal_scores INT,
+goal_assists INT,
+total_crosses INT,
+cross_accuracy INT,
+yellowcards INT,
+redcards INT,
+yellowredcards INT,
+offsides INT,
+pen_saved INT,
+pen_missed INT,
+pen_scored INT,
+tackles INT,
+blocks INT,
+intercepts INT,
+clearances INT,
+PRIMARY KEY(fixture_id, player_id),
+FOREIGN KEY(fixture_id) REFERENCES fixtures(id),
+FOREIGN KEY(player_id) REFERENCES players(id),
+FOREIGN KEY(team_id) REFERENCES teams(id));
+
+
+DROP TABLE IF EXISTS events;
+CREATE TABLE events(
+id INT AUTO_INCREMENT PRIMARY KEY,
+type VARCHAR(40));
+
+
+DROP TABLE IF EXISTS fixtures_events;
+CREATE TABLE fixtures_events(
+id BIGINT NOT NULL PRIMARY KEY,
+fixture_id INT NOT NULL,
+team_id INT NOT NULL,
+player_id INT NOT NULL,
+related_player_id INT,
+event_id INT NOT NULL,
+minute INT,
+FOREIGN KEY(fixture_id) REFERENCES fixtures(id),
+FOREIGN KEY(team_id) REFERENCES teams(id),
+FOREIGN KEY(player_id) REFERENCES players(id),
+FOREIGN KEY(related_player_id) REFERENCES players(id),
+FOREIGN KEY(event_id) REFERENCES events(id));
+
+
+DROP TABLE IF EXISTS fixtures_corners;
+CREATE TABLE fixtures_corners(
+id INT NOT NULL PRIMARY KEY,
+minute INT,
+team_id INT NOT NULL,
+fixture_id INT NOT NULL,
+FOREIGN KEY(team_id) REFERENCES teams(id),
+FOREIGN KEY(fixture_id) REFERENCES fixtures(id));
+
+
+DROP TABLE IF EXISTS accounts;
+CREATE TABLE accounts(
+id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+username VARCHAR(50),
+password VARCHAR(30) NOT NULL);
+
+
+DROP TABLE IF EXISTS account_metrics;
+CREATE TABLE account_metrics(
+id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+gender ENUM( 'F', 'M' , 'O'),
+age_range VARCHAR(30),
+country VARCHAR(80));
+
+
+DROP TABLE IF EXISTS ratings;
+CREATE TABLE ratings(
+fixture_id INT NOT NULL,
+team_id INT NOT NULL,
+player_id INT NOT NULL,
+account_id INT NOT NULL, 
+rating INT NOT NULL,
+date_time TIMESTAMP,
+PRIMARY KEY(fixture_id, player_id, account_id),
+FOREIGN KEY(fixture_id) REFERENCES fixtures(id),
+FOREIGN KEY(team_id) REFERENCES teams(id),
+FOREIGN KEY(player_id) REFERENCES players(id),
+FOREIGN KEY(account_id) REFERENCES accounts(id));
+
+
+DROP TABLE IF EXISTS ratings_history;
+CREATE TABLE ratings_history(
+id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+fixture_id INT NOT NULL,
+team_id INT NOT NULL,
+player_id INT NOT NULL,
+account_id INT NOT NULL, 
+rating INT NOT NULL,
+date_time TIMESTAMP,
+FOREIGN KEY(fixture_id) REFERENCES fixtures(id),
+FOREIGN KEY(team_id) REFERENCES teams(id),
+FOREIGN KEY(player_id) REFERENCES players(id),
+FOREIGN KEY(account_id) REFERENCES accounts(id));
+
+
+DROP TABLE IF EXISTS questions;
+CREATE TABLE questions(
+id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+question VARCHAR(500),
+type ENUM('radio', 'answer', 'checkbox'));
+
+
+DROP TABLE IF EXISTS feedback;
+CREATE TABLE feedback(
+id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+question_id INT NOT NULL,
+answer VARCHAR(500),
+FOREIGN KEY(question_id) REFERENCES questions(id));
+
+/* Triggers */
+
+DELIMITER $$
+CREATE TRIGGER `ratings_history_management` BEFORE DELETE ON `ratings` FOR EACH ROW BEGIN
+INSERT INTO ratings_history VALUES (null, old.fixture_id, old.team_id, old.player_id, old.account_id, old.rating, old.date_time);
+END
+$$
+DELIMITER ;
+
+

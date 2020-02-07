@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 
 /**
  *
@@ -40,7 +39,7 @@ public class SMDAA {
 
             
             String livescoresEndpoint = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&leagues=8&page=";
-            String livescoresEndpoint2 = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
+            //String livescoresEndpoint2 = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
             String livescoresEndpoint3 = "https://soccer.sportmonks.com/api/v2.0/livescores?api_token=" + TOKEN + "&leagues=8";
 
 
@@ -54,74 +53,79 @@ public class SMDAA {
             LocalDateTime livescoreCheckTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 07, 00);
             livescoreCheckTime = livescoreCheckTime.minusDays(1);
             
-           dataMaitenance(db);
             
             
-//           while (true) {
-//                
-//                
-//                if(maintenanceTime.isBefore(currentTime)){
-//                    
-//                    dataMaitenance(db);
-//                    System.out.println("i was here");
-//                    maintenanceTime = maintenanceTime.plusDays(7);
-//                    
-//                }
-//                
-//                if(livescoreCheckTime.isBefore(currentTime)){
-//                    
-//                    System.out.println("Getting livescoreTimes" + LocalDateTime.now() + "\n");
-//                    livescoreTime = fixtures.getLivescoreTimes(livescoresEndpoint3);
-//                    livescoreCheckTime = livescoreCheckTime.plusDays(1);
-//                    
-//                }
-//                    
-//                
-//                
-//                if(currentTime.isAfter(livescoreTime[0]) && currentTime.isBefore(livescoreTime[1]))
-//                {    
-//                    
-//                    if (currentTime.isAfter(futureTime)) {
-//                        System.out.println("\nCurrent Time :" + currentTime + "\nFutureTime: " + futureTime + "\n");
-//                        fixtures.manageLivescores(livescoresEndpoint);
-//                        Thread.sleep(1000);
-//                        futureTime = LocalDateTime.now().plusSeconds(3);
-//                         
-//
-//                        
-//                    }
-//
-//                    
-//                }
-//                
-//                if(currentTime.isBefore(maintenanceTime.minusHours(1))){
-//                    
-//                    if(currentTime.isAfter(livescoreTime[1].plusMinutes(30))){
-//                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
-//                        Thread.sleep(3600 * 1000);
-//                        
-//                        
-//                    }
-//                    
-//                    if(currentTime.isBefore(livescoreTime[0].minusMinutes(90)))
-//                    {
-//                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
-//                        Thread.sleep(3600 * 1000);
-//                    }  
-//                    
-//                    
-//                }else if(currentTime.isBefore(maintenanceTime.minusMinutes(1))){
-//                    Thread.sleep(60*1000);
-//                }
-//
-//              
-//              currentTime = LocalDateTime.now();
-//              
-//            
-//            }
+           while (true) {
+                
+                
+               //Weekly maintenance on the database data to ensure they are consistent with sportmonks
+                if(maintenanceTime.isBefore(currentTime)){
+                    System.out.println("Maintenance Started at : " + LocalDateTime.now());
+                    //dataMaitenance(db);
+                    System.out.println("Maintenance Finished at : " + LocalDateTime.now() + "\n");
+                    maintenanceTime = maintenanceTime.plusDays(7);
+                    
+                }
+                
+                //Getting the time frame for livegames during the day
+                if(livescoreCheckTime.isBefore(currentTime)){
+                    
+                    System.out.println("Getting livescoreTimes" + LocalDateTime.now() + "\n");
+                    livescoreTime = fixtures.getLivescoreTimes(livescoresEndpoint3);
+                    livescoreCheckTime = livescoreCheckTime.plusDays(1);
+                    System.out.println("LiveScore Timeframe : ");
+                    System.out.println(livescoreTime[0] + " - " + livescoreTime[1] + "\n");
+                    System.out.println("Finished livescoreTimes" + LocalDateTime.now() + "\n");
+                    
+                }
+                    
+                
+                //Getting the livegame data from the livescores endpoint if a game is currently running 
+                if(currentTime.isAfter(livescoreTime[0]) && currentTime.isBefore(livescoreTime[1]))
+                {    
+                    
+                    if (currentTime.isAfter(futureTime)) {
+                        System.out.println("\nGetting Live Data Now :" + currentTime);
+                        fixtures.manageLivescores(livescoresEndpoint);
+                        Thread.sleep(1000);
+                        futureTime = LocalDateTime.now().plusSeconds(3);
+                            
+                    }
+
+                    
+                }
+                
+                //Sleeping the thread if there is nothing to be done in the near future
+                if(currentTime.isBefore(maintenanceTime.minusHours(1))){
+                    
+                    if(currentTime.isAfter(livescoreTime[1].plusHours(30))){
+                        System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
+                        Thread.sleep(3600 * 1000);
+                        System.out.println("Waking up Before Livescore: " + LocalDateTime.now()+ "\n");
+                    }
+                    
+                    if(currentTime.isBefore(livescoreTime[0].minusMinutes(90)))
+                    {
+                        System.out.println("Sleep After Livescore: " + LocalDateTime.now()+ "\n");
+                        Thread.sleep(3600 * 1000);
+                        System.out.println("Waking up after Livescore: " + LocalDateTime.now()+ "\n");
+                    }  
+                    
+                    
+                }else if(currentTime.isBefore(maintenanceTime.minusMinutes(1))){
+                    Thread.sleep(60*1000);
+                }
+
+              //Updating the localTime variable
+              currentTime = LocalDateTime.now();
+              
+            
+            }
         }
     }
     
+    //Method to manage get and then update the data in the database,
+    //A number of methods calls are commented out as they are not necessary for the curent testing period
     public static void dataMaitenance(Connection db) throws IOException, SQLException{
         
             LocalDate sd = LocalDate.parse("2020-01-01");
@@ -135,7 +139,7 @@ public class SMDAA {
             String seasonsEndpoint = "https://soccer.sportmonks.com/api/v2.0/seasons?api_token=" + TOKEN + "&page=";
             String stagesEndpoint = "https://soccer.sportmonks.com/api/v2.0/stages/season/?api_token=" + TOKEN + "&page=";
             String roundsEndpoint = "https://soccer.sportmonks.com/api/v2.0/rounds/season/?api_token=" + TOKEN + "&page=";
-            String teamsEndpoint = "https://soccer.sportmonks.com/api/v2.0/teams/season/?api_token=" + TOKEN + "&page=";
+            String teamsEndpoint = "https://soccer.sportmonks.com/api/v2.0/teams/season/?api_token=" + TOKEN + "&include=coach&page=";
             String playersEndpoint = "https://soccer.sportmonks.com/api/v2.0/squad/season//team/?api_token=" + TOKEN + "&include=player&page=";
             
             Continents continents = new Continents(db);
@@ -151,14 +155,13 @@ public class SMDAA {
         
             //continents.manageContinents(continentEndpoint);
             //countries.manageCountires(countriesEndpoint);
-            //league.manageLeagues(leaguesEndpoint);
-            //seasons.manageSeasons(seasonsEndpoint);
+            league.manageLeagues(leaguesEndpoint);
+            seasons.manageSeasons(seasonsEndpoint);
             //venues.manageVenues(venuesEndpoint);
             //stages.manageStages(stagesEndpoint);
             //rounds.manageRounds(roundsEndpoint);
-            //teams.manageTeams(teamsEndpoint);
-            
-            //players.managePlayers(playersEndpoint);
+            teams.manageTeams(teamsEndpoint);
+            players.managePlayers(playersEndpoint);
             fixtures.manageFixtures(fixturesEndpoint);
             fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
         

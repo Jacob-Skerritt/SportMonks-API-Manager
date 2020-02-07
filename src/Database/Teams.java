@@ -67,10 +67,10 @@ public class Teams {
 
                     try {
                         // the mysql insert statement
-                        String query = " insert into teams (id, name, short_code, country_id, national_team, founded, logo, venue_id)"
-                                + " values (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
+                        String query = " insert into teams (id, name, short_code, country_id, national_team, founded, logo, venue_id, manager)"
+                                + " values (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE"
                                 + " name=VALUES(name), short_code=VALUES(short_code), country_id=VALUES(country_id), national_team=VALUES(national_team),"
-                                + " founded=VALUES(founded), logo=VALUES(logo), venue_id=VALUES(venue_id)";
+                                + " founded=VALUES(founded), logo=VALUES(logo), venue_id=VALUES(venue_id), manager=VALUES(manager)";
 
                         // create the mysql insert preparedstatement
                         PreparedStatement preparedStmt = db.prepareStatement(query);
@@ -99,6 +99,12 @@ public class Teams {
                             preparedStmt.setInt(8, tempObject.getInt("venue_id"));
                         } else {
                             preparedStmt.setNull(8, java.sql.Types.VARCHAR);
+                        }
+                        
+                        if (tempObject.has("coach") && !tempObject.get("coach").toString().equals("null")) {
+                            preparedStmt.setString(9, tempObject.getJSONObject("coach").getJSONObject("data").get("common_name").toString());
+                        } else {
+                            preparedStmt.setNull(9, java.sql.Types.VARCHAR);
                         }
 
                         // execute the preparedstatement
