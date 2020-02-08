@@ -61,7 +61,7 @@ public class SMDAA {
                //Weekly maintenance on the database data to ensure they are consistent with sportmonks
                 if(maintenanceTime.isBefore(currentTime)){
                     System.out.println("Maintenance Started at : " + LocalDateTime.now());
-                    dataMaitenance(db);
+                    //dataMaitenance(db);
                     System.out.println("Maintenance Finished at : " + LocalDateTime.now() + "\n");
                     maintenanceTime = maintenanceTime.plusDays(7);
                     
@@ -98,7 +98,7 @@ public class SMDAA {
                 //Sleeping the thread if there is nothing to be done in the near future
                 if(currentTime.isBefore(maintenanceTime.minusHours(1))){
                     
-                    if(currentTime.isAfter(livescoreTime[1].plusHours(30))){
+                    if(currentTime.isAfter(livescoreTime[1].plusHours(1))){
                         System.out.println("Sleep Before Livescore: " + LocalDateTime.now()+ "\n");
                         Thread.sleep(3600 * 1000);
                         System.out.println("Waking up Before Livescore: " + LocalDateTime.now()+ "\n");
