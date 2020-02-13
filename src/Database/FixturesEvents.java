@@ -17,29 +17,40 @@ import org.json.JSONObject;
 
 /**
  *
- * @author anyone
+ * @author Jacob Skerritt
+ * 
+ * The following class is responsible for handling all data related to events in fixtures.
+ * Additionally the class will determine if an event exists in the database,
+ * If an event is not present the class will store the event in the database
+ * 
  */
 public class FixturesEvents {
     
     private Connection db;
+    //HashMap used to store all the events currently in the the database
     private HashMap<String, Integer> events;
+    private FixturesPlayers fixturePlayer;
     
     public FixturesEvents(){}
     
     public FixturesEvents(Connection db){
         this.db= db;
         this.events = new HashMap<>();
+        this.fixturePlayer = new FixturesPlayers(db);
     }
     
     public  void addFixturesEvents(JSONArray fixturesEvents) throws IOException, SQLException{
         
+        //If the events HashMap is empty (when the program is first run), call loadEvents();
         if(events.isEmpty())
             loadEvents();
         
         
+        //Looping through all the events and adding them to the database
         for(Object obj:fixturesEvents){
             JSONObject tempObject = (JSONObject) obj; 
             
+            //Checking if the event is in the HashMap, if not, call addNewEvent method
             if(!tempObject.get("type").toString().equals("null") && !events.containsKey(tempObject.getString("type")))
                 addNewEvent(tempObject.getString("type"));
                  
@@ -89,10 +100,24 @@ public class FixturesEvents {
             }catch (SQLException ex) {
 
             }
+            
+            //If statement used to update player formation position in the case of a substitution
+            if(tempObject.get("type").equals("substitution"))
+            {
+                if(!tempObject.get("player_id").toString().equals("null") && !tempObject.get("player_id").toString().equals("null")){
+                    int position = fixturePlayer.getPlayerFormationPosition(tempObject.getInt("related_player_id"), tempObject.getInt("fixture_id"));
+                    fixturePlayer.setPlayerFormationPosition(tempObject.getInt("player_id"), tempObject.getInt("fixture_id"), position);
+                    fixturePlayer.setPlayerFormationPosition(tempObject.getInt("related_player_id"), tempObject.getInt("fixture_id"), 0);
+                }
+                
+            }
+            
+            
 
         }
     }
     
+    //Method used to get all of the events that exist in the database and load them into the events HashMap
     private void loadEvents() throws SQLException{
       String query = "SELECT * FROM events";
       
@@ -111,6 +136,7 @@ public class FixturesEvents {
  
     }
     
+    //Method used to add a single event to the database
     private void addNewEvent(String event) throws SQLException{
         try {
                 // the mysql insert statement

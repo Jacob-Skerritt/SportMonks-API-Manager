@@ -11,7 +11,13 @@ import java.sql.Statement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
+/**
+ * 
+ * @author Jacob Skerritt
+ * 
+ * Class used to add a link between teams and particular seasons in the database,
+ * Additionally used to return all the seasons and associated teams
+ */
 public class TeamsSeasons {
     
     private Connection db;
@@ -26,7 +32,7 @@ public class TeamsSeasons {
     }
     
     
-    
+    //Method to add links between teams in particular seasons, existing records are updated if changes occured
     public  void addTeamsSeasons(JSONArray teamsSeasons) throws IOException{
         
 
@@ -62,6 +68,7 @@ public class TeamsSeasons {
         
     }
     
+    //Mehtod used to get all of the teams and associated seasons, add them to a JSONObject and return them.
     public  JSONObject getTeamsSeasonsIds() throws SQLException{
       JSONObject teamsSeasons = new JSONObject();
       JSONArray teamsSeasonsArray = new JSONArray();

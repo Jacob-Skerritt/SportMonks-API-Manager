@@ -14,7 +14,9 @@ import org.json.JSONObject;
 
 /**
  *
- * @author anyone
+ * @author Jacob Skerritt
+ * 
+ * The following class is used to add corners from a fixture into the database
  */
 public class FixturesCorners {
     
@@ -30,6 +32,7 @@ public class FixturesCorners {
     
     }
     
+    //Method used to add corners into the database for a fixture, exitsting records are updated if changes occur
     public  void addFixturesCorners(JSONArray fixturesCorners) throws IOException{
         
         
