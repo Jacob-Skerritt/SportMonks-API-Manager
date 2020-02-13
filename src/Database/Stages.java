@@ -8,6 +8,13 @@ import java.sql.SQLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ *
+ * @author Jacob Skerrit
+ * 
+ * Class used to add the stages for each season into the database.
+ * 
+ */
 public class Stages {
 
     private Connection db;
@@ -21,7 +28,8 @@ public class Stages {
         this.db = db;
         this.seasons = new Seasons(db);
     }
-
+    
+    //Method to add stages into the database, updates existing records if changes have occured
     public void manageStages(String stagesEndpoint) throws IOException, SQLException {
 
         JSONObject seasonIds = seasons.getSeasonIds();

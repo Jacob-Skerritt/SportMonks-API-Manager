@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Database;
 
 import SportMonks.Endpoint;
@@ -13,6 +8,14 @@ import java.sql.SQLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
+/**
+ * 
+ * @author Jacob Skerritt
+ * 
+ * Class used to add the rounds for each active season to the database
+ * 
+ */
 public class Rounds {
 
     private Connection db;
@@ -26,7 +29,8 @@ public class Rounds {
         this.db = db;
         this.seasons = new Seasons(db);
     }
-
+    
+    //Method to add the rounds of a season to the database, updates existing records if any changes to the data has occured
     public void manageRounds(String roundsEndpoint) throws IOException, SQLException {
 
         JSONObject seasonIds = seasons.getSeasonIds();

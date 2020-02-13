@@ -10,6 +10,16 @@ import java.sql.Statement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
+/**
+ *
+ * @author Jacob Skerritt
+ * 
+ * Class responsible for handling venues used to hold football games
+ * Due to issues with SportMonks API implementation issues arise with venues
+ * As such, two methods have been added to solve the problem.
+ * 
+*/
 public class Venues {
 
     private Connection db;
@@ -23,9 +33,11 @@ public class Venues {
         this.db = db;
         this.seasons = new Seasons(db);
     }
-
+    
+    //Method to get the Venues used on a per season basis and add them to the database, updates existing records if any changes have occured
     public void manageVenues(String venuesEndpoint) throws IOException, SQLException {
-
+        
+        //Getting the active season Ids to use for getting the veneus used in each season.
         seasons = new Seasons(this.db);
         JSONObject seasonIds = seasons.getSeasonIds();
         JSONArray seasonsArray = seasonIds.getJSONArray("data");
@@ -102,6 +114,7 @@ public class Venues {
 
     }
 
+    //Method to add a single venue to the database, required due to issues with sportsmonks data for veneus
     public void addVenue(int venueId) throws IOException, SQLException {
         final String TOKEN = "IeJEyAVbp2IjoYzCdGpZBk7mWOAzSkRXHeiYYeOK9OWgOI0iNjaTcGAXsHfG";
         JSONObject venue = new JSONObject();
@@ -143,6 +156,8 @@ public class Venues {
         }
     }
 
+    //Method to check if a venue is in the database, if not, add it
+    //This is required due to the same veneu having a different name/id
     public boolean checkVenueExists(int venueId) throws IOException, SQLException {
 
         try {

@@ -14,11 +14,14 @@ import org.json.JSONObject;
 
 /**
  *
- * @author Jacob
+ * @author Jacob Skerrit
+ * 
+ * Class to manage anything related to the accessing of the SportMonks API Endpoints
+ * 
  */
 public class Endpoint {
   
-    
+    //Method to take a string that represents an API endpoints and retrieve a JSON object from that endpoint passing it back via the return
     public static JSONObject getDataFromEndpoint(String endpoint) throws ProtocolException, IOException{
         JSONObject newJson = new JSONObject();
         URL url = new URL(endpoint);
@@ -48,6 +51,11 @@ public class Endpoint {
         
     }
     
+    /*
+        Method used to alter an Endpoint, commonly called during loops for different leagues/seasons etc.
+        Take an endpoint, and insters and id at a specified location specified by the target string
+        Return this new Endpoint
+    */
     public static String makeNewEndpoint(String endpoint , int id, String target){
         
         int insertAt = endpoint.indexOf(target);

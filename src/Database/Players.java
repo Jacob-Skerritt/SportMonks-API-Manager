@@ -9,6 +9,13 @@ import java.sql.SQLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author Jacob skerritt
+ * 
+ * Class used to add all players from a single team in a season to the database
+ * 
+ */
 public class Players {
 
     private Connection db;
@@ -26,9 +33,8 @@ public class Players {
 
     }
 
+    //Method used to add players from a team in a particular season to the database, existing records are updated if changes have occured
     public void managePlayers(String playersEndpoint) throws SQLException, IOException {
-        // HI HI
-        //Hi HI Take 2
 
 
         JSONObject teamsSeasonsIds = teamsSeasons.getTeamsSeasonsIds();

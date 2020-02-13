@@ -15,7 +15,11 @@ import org.json.JSONObject;
 
 /**
  *
- * @author anyone
+ * @author Jacob Skerritt
+ * 
+ * Class responsible for adding players associated with a fixture to the database
+ * Additionally, contains the functionality used by FixturesEvents to handle player substitutions
+ * 
  */
 public class FixturesPlayers {
     
@@ -29,7 +33,7 @@ public class FixturesPlayers {
         this.db = db;
     }
     
-    
+    //Method used to add an array of players for a fixture to the database, existing records are updated if changes occuered
     public  void addFixturesPlayers(JSONArray fixturesPlayers) throws IOException{
         
         
@@ -208,6 +212,7 @@ public class FixturesPlayers {
         
     }
     
+    //method to get a players position in a formation based on the paramters fixture id and player id
     public int getPlayerFormationPosition(int playerId, int fixtureId){
         try {
             // the mysql insert statement
@@ -236,6 +241,7 @@ public class FixturesPlayers {
         return 0;
     }
     
+    //Method to update a plyaers formation for a particular fixture
     public void setPlayerFormationPosition(int playerId, int fixtureId, int position){
         try {
             // the mysql insert statement
