@@ -11,11 +11,14 @@ import Database.Seasons;
 import Database.Stages;
 import Database.Teams;
 import Database.Venues;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Scanner;
 
 /**
  *
@@ -26,11 +29,12 @@ import java.time.LocalDateTime;
  */
 public class SMDAA {
     //Initialising the token used to validate the programs access to the SportMonks api endpoints
-    final static String TOKEN = "IeJEyAVbp2IjoYzCdGpZBk7mWOAzSkRXHeiYYeOK9OWgOI0iNjaTcGAXsHfG";
+    static String TOKEN;
     
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, InterruptedException {
 
-        
+        getToken("C:\\Users\\anyone\\Desktop\\token.txt");
+        System.out.println(TOKEN);
         Class.forName("com.mysql.cj.jdbc.Driver");
         Config database = new Config("jdbc:mysql://localhost/in_game_ratings", "root", "");
         try (Connection db = database.getDatabaseConnection()) {
@@ -51,6 +55,8 @@ public class SMDAA {
             LocalDateTime[] livescoreTime = new LocalDateTime[2];
             LocalDateTime livescoreCheckTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 07, 00);
             livescoreCheckTime = livescoreCheckTime.minusDays(1);
+            
+            
             
             
             
@@ -167,6 +173,16 @@ public class SMDAA {
             players.managePlayers(playersEndpoint);
             fixtures.manageFixtures(fixturesEndpoint);
             fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
+        
+    }
+    
+    //Method used to get the API token  from a text file, required to make API connections
+    public static void getToken(String txtFile) throws FileNotFoundException{
+        File file = new File(txtFile); 
+        Scanner sc = new Scanner(file); 
+
+     
+        TOKEN  = sc.nextLine();
         
     }
 }
