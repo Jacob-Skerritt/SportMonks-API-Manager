@@ -10,6 +10,14 @@ import java.sql.Statement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author Jacob Skerritt
+ * 
+ * Class used to add teams to the database
+ * Additionally, returns all the team ids  stored in the database upon request
+ * 
+ */
 public class Teams {
 
     private Connection db;
@@ -24,6 +32,7 @@ public class Teams {
         this.seasons = new Seasons(db);
     }
 
+    //Method for adding all teams to the database, updates the existing records in the database if changes have occured
     public void manageTeams(String teamsEndpoint) throws IOException, SQLException {
 
         seasons = new Seasons(this.db);
@@ -136,7 +145,8 @@ public class Teams {
         }
 
     }
-
+    
+    //Method to return the id of all teams currently in the database
     public JSONObject getAllTeamIds() throws SQLException {
 
         JSONObject teams = new JSONObject();

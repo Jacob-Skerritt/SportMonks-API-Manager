@@ -9,8 +9,11 @@ import java.sql.Statement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/*
-    Class to manage database connections
+/**
+ * @author Jacob Skerritt
+ * 
+ * Class to manage database connection
+ * 
 */
 public class Config {
     

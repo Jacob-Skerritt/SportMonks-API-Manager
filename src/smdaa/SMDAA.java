@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package smdaa;
 
 import Database.Config;
@@ -24,10 +19,15 @@ import java.time.LocalDateTime;
 
 /**
  *
- * @author anyone
+ * @author Jacob skerrit
+ * 
+ * Main method for the program, controls used to manage the infinite while loop
+ * 
  */
 public class SMDAA {
+    //Initialising the token used to validate the programs access to the SportMonks api endpoints
     final static String TOKEN = "IeJEyAVbp2IjoYzCdGpZBk7mWOAzSkRXHeiYYeOK9OWgOI0iNjaTcGAXsHfG";
+    
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException, InterruptedException {
 
         
@@ -37,18 +37,17 @@ public class SMDAA {
             
             Fixtures fixtures = new Fixtures(db);
 
-            
+            //Initialising the livescore endpoints vairables
             String livescoresEndpoint = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&leagues=8&page=";
             //String livescoresEndpoint2 = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
             String livescoresEndpoint3 = "https://soccer.sportmonks.com/api/v2.0/livescores?api_token=" + TOKEN + "&leagues=8";
 
 
             
-
+            //Initialising the variables used for managing time in the loop
             LocalDateTime currentTime = LocalDateTime.now();
             LocalDateTime futureTime = currentTime.plusSeconds(5);
             LocalDateTime maintenanceTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 00, 50);
-            
             LocalDateTime[] livescoreTime = new LocalDateTime[2];
             LocalDateTime livescoreCheckTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 07, 00);
             livescoreCheckTime = livescoreCheckTime.minusDays(1);
@@ -61,7 +60,7 @@ public class SMDAA {
                //Weekly maintenance on the database data to ensure they are consistent with sportmonks
                 if(maintenanceTime.isBefore(currentTime)){
                     System.out.println("Maintenance Started at : " + LocalDateTime.now());
-                    //dataMaitenance(db);
+                    dataMaitenance(db);
                     System.out.println("Maintenance Finished at : " + LocalDateTime.now() + "\n");
                     maintenanceTime = maintenanceTime.plusDays(7);
                     
@@ -87,8 +86,9 @@ public class SMDAA {
                     if (currentTime.isAfter(futureTime)) {
                         System.out.println("\nGetting Live Data Now :" + currentTime);
                         fixtures.manageLivescores(livescoresEndpoint);
-                        Thread.sleep(1000);
                         futureTime = LocalDateTime.now().plusSeconds(3);
+                        Thread.sleep(1000);
+                        
                             
                     }
 
@@ -126,8 +126,10 @@ public class SMDAA {
     
     //Method to manage get and then update the data in the database,
     //A number of methods calls are commented out as they are not necessary for the curent testing period
+    //Any method calls that are commented out are simply to save API calls or for testing purposes
     public static void dataMaitenance(Connection db) throws IOException, SQLException{
-        
+            
+        //initialising all of the endpoint variables that will be use to access the SportMonks API endpionts
             LocalDate sd = LocalDate.parse("2020-01-01");
             LocalDate ed = LocalDate.parse("2020-06-01");
             String fixturesEndpoint = "https://soccer.sportmonks.com/api/v2.0/fixtures/between/" + sd + "/" + ed + "?api_token=" + TOKEN + "&include=events,bench,lineup,stats,corners&leagues=&page=";
@@ -142,6 +144,7 @@ public class SMDAA {
             String teamsEndpoint = "https://soccer.sportmonks.com/api/v2.0/teams/season/?api_token=" + TOKEN + "&include=coach&page=";
             String playersEndpoint = "https://soccer.sportmonks.com/api/v2.0/squad/season//team/?api_token=" + TOKEN + "&include=player&page=";
             
+            //Initialising the objects that represent database tables
             Continents continents = new Continents(db);
             Venues venues = new Venues(db);
             Countries countries = new Countries(db);
@@ -152,7 +155,7 @@ public class SMDAA {
             Teams teams = new Teams(db);
             Players players = new Players(db);
             Fixtures fixtures = new Fixtures(db);
-        
+            
             //continents.manageContinents(continentEndpoint);
             //countries.manageCountires(countriesEndpoint);
             league.manageLeagues(leaguesEndpoint);

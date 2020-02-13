@@ -10,6 +10,14 @@ import java.sql.Statement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author Jacob Skerritt
+ * 
+ * Class used to add the seasons to the database
+ * Additionally, will return all the active season Ids upon request
+ * 
+ */
 public class Seasons {
 
     private Connection db;
@@ -21,7 +29,8 @@ public class Seasons {
     public Seasons(Connection db) {
         this.db = db;
     }
-
+    
+    //Method used to add seasons to the database, existing records are updated if changes have occured
     public void manageSeasons(String seasonsEndpoint) throws IOException {
 
         boolean lastPage = false;
@@ -79,7 +88,8 @@ public class Seasons {
         }
 
     }
-
+    
+    //Method used to return all active Seasons ids in a jsonObject
     public JSONObject getSeasonIds() throws SQLException {
         JSONObject seasons = new JSONObject();
         JSONArray seasonsArray = new JSONArray();

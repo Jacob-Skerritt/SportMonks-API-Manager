@@ -8,7 +8,12 @@ import java.sql.SQLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
+/**
+ * 
+ * @author Jacob Skerritt
+ * 
+ * Class responsible for adding a team related to a particular fixture to the database
+ */
 public class FixturesTeams {
     private Connection db;
     
@@ -20,6 +25,7 @@ public class FixturesTeams {
         this.db = db;
     }
     
+    //method used to add a team to the database for a particular fixture
     public  void addFixturesTeams(JSONObject teamObject) throws IOException{
         
         JSONObject statsObject = new JSONObject();

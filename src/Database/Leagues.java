@@ -16,8 +16,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- *
- * @author Jacob
+ * @author Jacob Skerritt
+ * 
+ * Class used to add Leagues to the database
+ * Additionally used to return a JSONObject containing an Array of active league ids
+ * 
  */
 public class Leagues {
 
@@ -31,6 +34,7 @@ public class Leagues {
         this.db = db;
     }
 
+    //Method to add leagues to the database, updates exisitng records if any changes in the data have occured
     public void manageLeagues(String leaguesEndpoint) throws IOException {
 
         boolean lastPage = false;
@@ -90,6 +94,7 @@ public class Leagues {
         }
     }
 
+    //Method used to get active league ids from the database and return them as a JSONarray in  JSONObject
     public JSONObject getJSONLeaguesId() throws SQLException {
         JSONObject leagues = new JSONObject();
         JSONArray leaguesArray = new JSONArray();

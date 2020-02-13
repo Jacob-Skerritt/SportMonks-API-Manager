@@ -8,6 +8,13 @@ import java.sql.SQLException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author Jacob Skerrit
+ * 
+ * Class used to add a link between players and their team to the database linking table
+ * 
+ */
 
 public class TeamsPlayers {
     
@@ -22,6 +29,7 @@ public class TeamsPlayers {
         this.db = db;
     }
     
+    //Method used to link players to a team in the database linking table, updates existing records if changes have occured
     public  void addTeamsPlayers(JSONArray teamsPlayers) throws IOException{
         
 

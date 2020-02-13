@@ -13,8 +13,17 @@ import java.time.LocalTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author Jacob Skerritt
+ * 
+ * The following class is responsible for the acquisition of past, present and future fxitures from the SportMonks API endpoints.
+ * 
+ */
+
 public class Fixtures {
 
+    //Creating the different class variable to handle the associated fixture data 
     private Connection db;
     private Leagues leagues;
     private FixturesPlayers fixturesPlayers;
@@ -26,7 +35,7 @@ public class Fixtures {
     public Fixtures() {
 
     }
-
+    
     public Fixtures(Connection db) {
         this.db = db;
         this.leagues = new Leagues(db);
@@ -36,15 +45,25 @@ public class Fixtures {
         this.fixturesTeams = new FixturesTeams(db);
         this.venues = new Venues(db);
     }
-
+    
+    
+    /*
+    The following method is used to get fixtures for all of the active leagues in our database within a particular date range
+    Date range is specified in the fixturesEndpint parameter
+    */
     public void manageFixtures(String fixturesEndpoint) throws IOException, SQLException {
-
+        
+        
+        //Getting active league ids
         JSONObject leagueIds = leagues.getJSONLeaguesId();
         JSONArray leaguesArray = leagueIds.getJSONArray("data");
-
-        for (Object seasonId : leaguesArray) {
-            JSONObject tempSeason = (JSONObject) seasonId;
-            int id = tempSeason.getInt("id");
+        
+        //Looping through all activ leagues to get the fixtures within the data range
+        for (Object league : leaguesArray) {
+            JSONObject tempLeague = (JSONObject) league;
+            int id = tempLeague.getInt("id");
+            
+            //Using the league id to create the new endpoint url
             String newFixturesEndpoint = Endpoint.makeNewEndpoint(fixturesEndpoint, id, "leagues=");
 
             boolean lastPage = false;
@@ -138,14 +157,16 @@ public class Fixtures {
                     } catch (SQLException ex) {
 
                     }
-
+                    
+                    //Pasing the associated data to the relevant classes to handle adding the data to the database
                     fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("bench"));
                     fixturesPlayers.addFixturesPlayers(tempFixture.getJSONArray("lineup"));
                     fixturesEvents.addFixturesEvents(tempFixture.getJSONArray("events"));
                     fixturesCorners.addFixturesCorners(tempFixture.getJSONArray("corners"));
+                    //Creating the localTeam and visitiorTeam objects from a combination of data within the retreived data
                     JSONObject localTeam = createFixtureTeam(tempFixture, true);
                     JSONObject visitorTeam = createFixtureTeam(tempFixture, false);
-
+                    
                     fixturesTeams.addFixturesTeams(localTeam);
                     fixturesTeams.addFixturesTeams(visitorTeam);
 
@@ -161,7 +182,13 @@ public class Fixtures {
         }
 
     }
-
+    
+    /*
+    The follwing methods works on a similar principle to the manageFixtures method but instead of getting fixutres for partiuclar leagues in a range of dates
+    It gets all of the games currently live each day based on the type of endpoint passed into the parameter.
+    One endpoint may get all the games being played that day, from start to finish
+    another endpoint will give the game currently finished, in progress or to be played within a 3-4 hours range
+    */
     public void manageLivescores(String livescoresEndpoint) throws IOException, SQLException {
 
         
@@ -395,8 +422,19 @@ public class Fixtures {
         }
 
     }
-
+    
+    /**
+     * The following method is used to get a date range for the live games being played for a particular day for all or a limited number of leagues (based on endpoint call)
+     * The returned date range will be used to determine when the livescore API calls should be executing, if at all. If there are no game
+     * The date range is pushed to their mins so that the range does not confirm to the requirements for the livescore request parameters in SMDAA.java
+     * @param livescoresEndpoint
+     * @return
+     * @throws IOException
+     * @throws SQLException 
+     */
     public LocalDateTime[] getLivescoreTimes(String livescoresEndpoint) throws IOException, SQLException {
+        
+        //Creating a LocaDateTimie array to hold the default values for the time range
         LocalDateTime[] startEndArray = new LocalDateTime[2];
         LocalDateTime min = LocalDateTime.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDateTime.now().getDayOfMonth(), 23, 59);
         LocalDateTime max = LocalDateTime.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), LocalDateTime.now().getDayOfMonth(), 00, 00);
@@ -435,7 +473,18 @@ public class Fixtures {
 
         return startEndArray;
     }
-
+    
+    
+    /**
+     * 
+     * Method used to effectively create the team objects to pass to the FixtureTeams class
+     * use the parameter localTeam to determine if the team being created is local or visitor
+     * 
+     * @param fixture
+     * @param localTeam
+     * @return 
+     */
+    
     private JSONObject createFixtureTeam(JSONObject fixture, boolean localTeam) {
 
         JSONObject returnFixture = new JSONObject();
@@ -493,7 +542,7 @@ public class Fixtures {
 
     }
 
-    //remove this?
+    //A method to make the extraction of data from the retrieved JSONObject via the SportMonks API call tidier.
     private JSONObject sanitiseFixture(JSONObject fixture) {
 
         //Objects for data associated with livescores and fixtures api endpoints

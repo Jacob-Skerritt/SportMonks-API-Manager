@@ -15,7 +15,10 @@ import org.json.JSONObject;
 
 /**
  *
- * @author Jacob
+ * @author Jacob Skerrit
+ * 
+ * Class used to add countries to the database
+ * 
  */
 public class Countries {
 
@@ -30,9 +33,11 @@ public class Countries {
         this.db = db;
         this.continents = new Continents(db);
     }
-
+    
+    //Method used to get all the countries from SportMonks API endpoint and add them to the database, updates the existing records if changes have been made
     public void manageCountires(String countriesEndpoint) throws SQLException, IOException {
-
+        
+        //Initialising variables to manage pagination
         boolean lastPage = false;
         int i = 1;
         int maxPage = 0;
@@ -47,7 +52,8 @@ public class Countries {
                 System.out.println(e);
                 break;
             }
-
+            
+            //Retrieving a JSONObject containting an array of continents and there corresponding ids fro the database
             JSONObject continentsObject = continents.getJSONContinents();
             JSONArray continentsArray = continentsObject.getJSONArray("data");
 
@@ -62,12 +68,14 @@ public class Countries {
                 JSONObject pagination = metaData.getJSONObject("pagination");
                 maxPage = pagination.getInt("total_pages");
             }
-
+            
+            //Looping through all of the countries
             for (Object obj : countriesArray) {
                 JSONObject tempObject = (JSONObject) obj;
 
                 countriesExtra = tempObject.get("extra");
-
+                
+                //cheking if a country has an associated continent, if not, assigning it to Europe as default
                 if (!countriesExtra.toString().equals("null")) {
 
                     JSONCountriesExtra = (JSONObject) countriesExtra;
@@ -75,7 +83,8 @@ public class Countries {
                 } else {
                     continent = "Europe";
                 }
-
+                
+                //Looping through all continents to find the matching one to get the id as it is a foreign key in the countries table
                 for (Object obj2 : continentsArray) {
                     JSONObject tempContinentObject = (JSONObject) obj2;
                     if (tempContinentObject.getString("name").equals(continent)) {
@@ -83,7 +92,8 @@ public class Countries {
                     }
 
                 }
-
+                
+                //Adding a country to the database
                 try {
                     // the mysql insert statement
                     String query = " insert into countries (id, name, continent_id, flag)"
@@ -105,6 +115,7 @@ public class Countries {
                 }
 
             }
+            //Incrementing i if there are more pages of data, otherwise, exiting loop
             if (maxPage <= i) {
                 lastPage = true;
             } else {
