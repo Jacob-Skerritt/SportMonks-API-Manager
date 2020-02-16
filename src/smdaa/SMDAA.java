@@ -42,10 +42,10 @@ public class SMDAA {
             Fixtures fixtures = new Fixtures(db);
 
             //Initialising the livescore endpoints vairables
-            String livescoresEndpoint = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&leagues=8&page=";
+            String livescoresEndpoint = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
             //String livescoresEndpoint2 = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
-            String livescoresEndpoint3 = "https://soccer.sportmonks.com/api/v2.0/livescores?api_token=" + TOKEN + "&leagues=8";
-
+            String livescoresEndpoint3 = "https://soccer.sportmonks.com/api/v2.0/livescores?api_token=" + TOKEN+ "&leagues=8";
+            //+ "&leagues=8"
 
             
             //Initialising the variables used for managing time in the loop
@@ -66,10 +66,10 @@ public class SMDAA {
                //Weekly maintenance on the database data to ensure they are consistent with sportmonks
                 if(maintenanceTime.isBefore(currentTime)){
                     System.out.println("Maintenance Started at : " + LocalDateTime.now());
-                    dataMaitenance(db);
+                    //dataMaitenance(db);
                     System.out.println("Maintenance Finished at : " + LocalDateTime.now() + "\n");
                     maintenanceTime = maintenanceTime.plusDays(7);
-                    
+                    System.out.println("Next Maintenance Scheduled for : " + maintenanceTime + "\n");
                 }
                 
                 //Getting the time frame for livegames during the day
@@ -91,8 +91,9 @@ public class SMDAA {
                     
                     if (currentTime.isAfter(futureTime)) {
                         System.out.println("\nGetting Live Data Now :" + currentTime);
+                        futureTime = LocalDateTime.now().plusSeconds(30);
                         fixtures.manageLivescores(livescoresEndpoint);
-                        futureTime = LocalDateTime.now().plusSeconds(3);
+                        
                         Thread.sleep(1000);
                         
                             

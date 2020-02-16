@@ -461,7 +461,7 @@ public class Fixtures {
             
             
             if(dt.isBefore(min))
-                min = dt;
+                min = dt.minusHours(1);
             
             if(dt.isAfter(max))
                 max = dt;
