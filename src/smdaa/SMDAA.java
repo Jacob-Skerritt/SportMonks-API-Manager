@@ -75,7 +75,7 @@ public class SMDAA {
                 //Weekly maintenance on the database data to ensure they are consistent with sportmonks
                 if(maintenanceTime.isBefore(currentTime)){
                     System.out.println("Maintenance Started at : " + LocalDateTime.now());
-                    dataMaitenance(db);
+                    //dataMaitenance(db);
                     System.out.println("Maintenance Finished at : " + LocalDateTime.now() + "\n");
                     maintenanceTime = maintenanceTime.plusDays(7);
                     System.out.println("Next Maintenance Scheduled for : " + maintenanceTime + "\n");
@@ -100,7 +100,7 @@ public class SMDAA {
                     
                     if (currentTime.isAfter(futureTime)) {
                         System.out.println("\nGetting Live Data Now :" + currentTime);
-                        futureTime = LocalDateTime.now().plusSeconds(10);
+                        futureTime = LocalDateTime.now().plusSeconds(100);
                         fixtures.manageLivescores(livescoresEndpoint);
                         
                         Thread.sleep(1000);
@@ -134,8 +134,6 @@ public class SMDAA {
                 
                 //Updating the localTime variable
                 currentTime = LocalDateTime.now();
-                System.out.println(db);
-                //db.close();
                 
             }catch(Exception e){
                 System.out.println(e);
@@ -200,8 +198,8 @@ public class SMDAA {
             //rounds.manageRounds(roundsEndpoint);
             //teams.manageTeams(teamsEndpoint);
             //players.managePlayers(playersEndpoint);
-            //fixtures.manageFixtures(fixturesEndpoint);
-            fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
+            fixtures.manageFixtures(fixturesEndpoint);
+            //fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
         
     }
     

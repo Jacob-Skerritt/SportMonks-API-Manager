@@ -598,8 +598,15 @@ public class Fixtures {
         }
 
         //Data related to time for the game, during, before, after
+        
+        /*
+        Hacked Fix for the game time, if program goes to produciton, will require further changes
+        Issue is solved soley for current server/database setup, will need to be altrered if enviornment changes
+        */
         sanitisedFixture.put("status", timeObject.getString("status"));
-        sanitisedFixture.put("time", fixtureStartingObject.getString("time"));
+        LocalTime tempLocalTimeObj = LocalTime.parse(fixtureStartingObject.getString("time"));
+        tempLocalTimeObj = tempLocalTimeObj.plusHours(1);
+        sanitisedFixture.put("time", tempLocalTimeObj.toString() + ":00");
         sanitisedFixture.put("date", fixtureStartingObject.getString("date"));
         sanitisedFixture.put("timezone", fixtureStartingObject.getString("timezone"));
 
