@@ -53,11 +53,13 @@ public class SMDAA {
             String livescoresEndpoint = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
             //String livescoresEndpoint2 = "https://soccer.sportmonks.com/api/v2.0/livescores/now?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
             String livescoresEndpoint3 = "https://soccer.sportmonks.com/api/v2.0/livescores?api_token=" + TOKEN;
+            String livescoresEndpoint4 = "https://soccer.sportmonks.com/api/v2.0/livescores?api_token=" + TOKEN + "&include=events,bench,lineup,corners,stats&page=";
             //+ "&leagues=8"
 
             
             //Initialising the variables used for managing time in the loop
             LocalDateTime currentTime = LocalDateTime.now();
+            LocalDateTime updateTime = LocalDateTime.now();
             LocalDateTime futureTime = currentTime.plusSeconds(5);
             LocalDateTime maintenanceTime = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(), currentTime.getDayOfMonth(), 00, 50);
             LocalDateTime[] livescoreTime = new LocalDateTime[2];
@@ -80,6 +82,13 @@ public class SMDAA {
                     maintenanceTime = maintenanceTime.plusDays(7);
                     System.out.println("Next Maintenance Scheduled for : " + maintenanceTime + "\n");
                 }
+                
+                if (currentTime.isAfter(updateTime)) {
+                    System.out.println("\nUpdating Daily Fixtures Data Now :" + currentTime);
+                    updateTime = LocalDateTime.now().plusMinutes(30);
+                    fixtures.manageLivescores(livescoresEndpoint4);  
+                        
+                 }
                 
                 //Getting the time frame for livegames during the day
                 if(livescoreCheckTime.isBefore(currentTime)){
@@ -109,6 +118,7 @@ public class SMDAA {
                     }
                     
                     
+                    
                 }
                 
                 //Sleeping the thread if there is nothing to be done in the near future
@@ -131,6 +141,8 @@ public class SMDAA {
                 }else if(currentTime.isBefore(maintenanceTime.minusMinutes(1))){
                     Thread.sleep(60*1000);
                 }
+                
+
                 
                 //Updating the localTime variable
                 currentTime = LocalDateTime.now();
