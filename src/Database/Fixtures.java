@@ -153,9 +153,12 @@ public class Fixtures {
                         preparedStmt.setInt(19, tempFixture.getInt("injury_time"));
                         // execute the preparedstatement
                         preparedStmt.execute();
+                         
 
                     } catch (SQLException ex) {
 
+                    }finally{
+                        
                     }
                     
                     //Pasing the associated data to the relevant classes to handle adding the data to the database
