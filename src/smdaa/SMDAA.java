@@ -77,7 +77,7 @@ public class SMDAA {
                 //Weekly maintenance on the database data to ensure they are consistent with sportmonks
                 if(maintenanceTime.isBefore(currentTime)){
                     System.out.println("Maintenance Started at : " + LocalDateTime.now());
-                    //dataMaitenance(db);
+                    dataMaitenance(db);
                     System.out.println("Maintenance Finished at : " + LocalDateTime.now() + "\n");
                     maintenanceTime = maintenanceTime.plusDays(7);
                     System.out.println("Next Maintenance Scheduled for : " + maintenanceTime + "\n");
@@ -201,17 +201,17 @@ public class SMDAA {
             Players players = new Players(db);
             Fixtures fixtures = new Fixtures(db);
             
-            //continents.manageContinents(continentEndpoint);
-            //countries.manageCountires(countriesEndpoint);
-            //league.manageLeagues(leaguesEndpoint);
-            //seasons.manageSeasons(seasonsEndpoint);
-            //venues.manageVenues(venuesEndpoint);
-            //stages.manageStages(stagesEndpoint);
-            //rounds.manageRounds(roundsEndpoint);
-            //teams.manageTeams(teamsEndpoint);
-            //players.managePlayers(playersEndpoint);
+            continents.manageContinents(continentEndpoint);
+            countries.manageCountires(countriesEndpoint);
+            league.manageLeagues(leaguesEndpoint);
+            seasons.manageSeasons(seasonsEndpoint);
+            venues.manageVenues(venuesEndpoint);
+            stages.manageStages(stagesEndpoint);
+            rounds.manageRounds(roundsEndpoint);
+            teams.manageTeams(teamsEndpoint);
+            players.managePlayers(playersEndpoint);
             fixtures.manageFixtures(fixturesEndpoint);
-            //fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
+            fixtures.getPastLeagueFixtures(fixturesPremierLeagueEndpoint);
         
     }
     
